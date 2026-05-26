@@ -1,0 +1,8 @@
+@if (budgetsResource.isLoading()) {
+<div class="flex justify-center items-center h-screen">
+  <span class="loading loading-spinner loading-lg"></span>
+</div>
+} @if (budgetsResource.hasValue() && budgetsResource.value()?.data != null) {
+<!-- Presupuesto -->
+<budget-details [budget]="budgetsResource.value()?.data!" />
+}

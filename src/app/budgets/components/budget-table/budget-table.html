@@ -1,0 +1,54 @@
+<div class="overflow-x-auto bg-gray-900 rounded-2xl p-4">
+  <table class="table">
+    <!-- head -->
+    <thead>
+      <tr>
+        <th>
+          <label>
+            <input type="checkbox" class="checkbox" />
+          </label>
+        </th>
+        <th>N°</th>
+        <th>Cliente</th>
+        <th>Proyecto</th>
+        <th>Descripción</th>
+        <th>Estado</th>
+        <th>Fecha Creación</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- row 1 -->
+      @if(budgets() == null || budgets().length == 0) {
+      <tr>
+        <td colspan="8">
+          <div class="alert alert-info">
+            <span>No hay presupuestos disponibles</span>
+          </div>
+        </td>
+      </tr>
+      } @for (item of budgets(); track item.id) {
+      <tr>
+        <th>
+          <label>
+            <input type="checkbox" class="checkbox" />
+          </label>
+        </th>
+        <td>{{ item.id }}</td>
+        <td>{{ item.customer.displayName }}</td>
+        <td>{{ item.projectName }}</td>
+        <td>{{ item.description }}</td>
+        <td>{{ onStateDescription(item.state) }}</td>
+        <td>{{ item.createAt}}</td>
+        <th>
+          <a
+            [routerLink]="['/admin/budgets', item.id]"
+            class="btn btn-ghost text-accent btn-xs"
+            >Detalles</a
+          >
+        </th>
+      </tr>
+      }
+    </tbody>
+  </table>
+</div>

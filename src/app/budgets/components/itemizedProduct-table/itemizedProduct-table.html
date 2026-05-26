@@ -1,0 +1,268 @@
+<div class="overflow-x-auto bg-gray-900 rounded-2xl p-4">
+  <table class="table">
+    <!-- head -->
+    <thead>
+      <tr>
+        <th>
+          <label>
+            <input type="checkbox" class="checkbox" />
+          </label>
+        </th>
+        <th>Referencia</th>
+        <th>Largo</th>
+        <th>Ancho</th>
+        <th>Color</th>
+        <th>Material</th>
+        <th>Valor Unitario</th>
+        <th>Cantidad</th>
+        <th>Total</th>
+        <th>
+          <button
+            class="btn btn-primary"
+            type="button"
+            onclick="itemized_product_modal.showModal()"
+          >
+            Nuevo Item
+          </button>
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      @if(itemizedProductsInput() == null || itemizedProductsInput().length ==
+      0) {
+      <tr>
+        <td colspan="10">
+          <div class="alert alert-info">
+            <span>No hay productos itemizados</span>
+          </div>
+        </td>
+      </tr>
+      }@else { @for (item of itemizedProductsInput(); track item.id) {
+      @if(item.active){
+      <tr>
+        <th>
+          <label>
+            <input type="checkbox" class="checkbox" />
+          </label>
+        </th>
+        <td>{{ item.description }}</td>
+        <td>{{ item.long }}</td>
+        <td>{{ item.width }}</td>
+        <td>{{ item.color }}</td>
+        <td>{{ item.material }}</td>
+        <td>{{ item.unitValue }}</td>
+        <td>{{ item.amount }}</td>
+        <td>{{ item.totalValue }}</td>
+        <th>
+          <a
+            class="btn btn-ghost text-accent btn-md"
+            (click)="onRemoveItemizedProduct(item)"
+            ><div>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke-width="0.8"
+                stroke="currentColor"
+                class="w-6 h-6 text-white"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M9,3V4H4V6H5V19A2,2 0 0,0 7,21H17A2,2 0 0,0 19,19V6H20V4H15V3H9M7,6H17V19H7V6M9,8V17H11V8H9M13,8V17H15V8H13Z"
+                />
+              </svg></div
+          ></a>
+          <a
+            class="btn btn-ghost text-accent btn-md"
+            onclick="itemized_product_modal.showModal()"
+            (click)="onEditItemizedProduct(item)"
+            ><div>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke-width="0.8"
+                stroke="currentColor"
+                class="w-6 h-6 text-white"
+              >
+                <path
+                  xmlns="http://www.w3.org/2000/svg"
+                  d="M20.71,7.04C21.1,6.65 21.1,6 20.71,5.63L18.37,3.29C18,2.9 17.35,2.9 16.96,3.29L15.12,5.12L18.87,8.87M3,17.25V21H6.75L17.81,9.93L14.06,6.18L3,17.25Z"
+                />
+              </svg></div
+          ></a>
+        </th>
+      </tr>
+      } } }
+    </tbody>
+  </table>
+</div>
+<dialog id="itemized_product_modal" class="modal">
+  <div class="p-4 overflow-y-auto flex-grow">
+    <div class="modal-box w-12/13 max-w-5xl h-auto max-h-[90vh]">
+      <div class="flex flex-col gap-2">
+        <form [formGroup]="itemizedProductForm">
+          <div class="border-b border-gray-900/10 pb-12">
+            <h2 class="text-lg font-bold">Nuevo Item Producto</h2>
+            <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+              <div class="sm:col-span-6">
+                <label for="first-name" class="block text-sm/6 font-medium"
+                  >Referencia</label
+                >
+                <div class="mt-2">
+                  <input
+                    id="description"
+                    type="text"
+                    name="description"
+                    placeholder="Descripción"
+                    class="input input-bordered w-full"
+                    formControlName="description"
+                    (change)="onInputTextChange($event)"
+                  />
+                </div>
+              </div>
+
+              <div class="sm:col-span-6">
+                <label for="first-name" class="block text-sm/6 font-medium"
+                  >Material</label
+                >
+                <div class="mt-2">
+                  <input
+                    id="material"
+                    type="text"
+                    name="material"
+                    placeholder="Material"
+                    class="input input-bordered w-full"
+                    formControlName="material"
+                    (change)="onInputTextChange($event)"
+                  />
+                </div>
+              </div>
+
+              <div class="sm:col-span-2">
+                <label for="first-name" class="block text-sm/6 font-medium"
+                  >Largo</label
+                >
+                <div class="mt-2">
+                  <input
+                    id="long"
+                    type="text"
+                    name="long"
+                    placeholder="Largo"
+                    class="input input-bordered w-full"
+                    formControlName="long"
+                    (change)="onInputNumberChange($event)"
+                  />
+                </div>
+              </div>
+
+              <div class="sm:col-span-2">
+                <label for="first-name" class="block text-sm/6 font-medium"
+                  >Ancho</label
+                >
+                <div class="mt-2">
+                  <input
+                    id="width"
+                    type="text"
+                    name="width"
+                    placeholder="Ancho"
+                    class="input input-bordered w-full"
+                    formControlName="width"
+                    (change)="onInputNumberChange($event)"
+                  />
+                </div>
+              </div>
+
+              <div class="sm:col-span-2">
+                <label for="first-name" class="block text-sm/6 font-medium"
+                  >Color</label
+                >
+                <div class="mt-2">
+                  <input
+                    id="color"
+                    type="text"
+                    name="color"
+                    placeholder="Color"
+                    class="input input-bordered w-full"
+                    formControlName="color"
+                    (change)="onInputTextChange($event)"
+                  />
+                </div>
+              </div>
+
+              <div class="sm:col-span-2">
+                <label for="first-name" class="block text-sm/6 font-medium"
+                  >Valor Unitario</label
+                >
+                <div class="mt-2">
+                  <input
+                    id="unitValue"
+                    type="text"
+                    name="unitValue"
+                    placeholder="Valor Unitario"
+                    class="input input-bordered w-full"
+                    formControlName="unitValue"
+                    (change)="onInputNumberChange($event)"
+                  />
+                </div>
+              </div>
+
+              <div class="sm:col-span-2">
+                <label for="first-name" class="block text-sm/6 font-medium"
+                  >Cantidad</label
+                >
+                <div class="mt-2">
+                  <input
+                    id="amount"
+                    type="text"
+                    name="amount"
+                    placeholder="Cantidad"
+                    class="input input-bordered w-full"
+                    formControlName="amount"
+                    (change)="onInputNumberChange($event)"
+                  />
+                </div>
+              </div>
+
+              <div class="sm:col-span-2">
+                <label for="first-name" class="block text-sm/6 font-medium"
+                  >Total</label
+                >
+                <div class="mt-2">
+                  <input
+                    readonly
+                    id="totalValue"
+                    type="text"
+                    name="totalValue"
+                    placeholder="Total"
+                    class="input input-bordered w-full"
+                    formControlName="totalValue"
+                    [value]="total()"
+                  />
+                  <!-- [value]="itemizedProductForm.get('totalValue')?.value" -->
+                </div>
+              </div>
+            </div>
+          </div>
+          <button
+            class="btn btn-primary"
+            type="button"
+            (click)="onAddItemizedProduct()"
+          >
+            Agregar
+          </button>
+        </form>
+      </div>
+      <div class="modal-action">
+        <form method="dialog">
+          <button class="btn btn-default">Close</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+<!-- <div class="sm:col-span-6">
+              <search-product (productEvent)="onProductSelected($event)" />
+            </div> -->

@@ -1,0 +1,274 @@
+<h1 class="text-2xl font-bold">
+  Detalle Producto: {{ product().description }}
+</h1>
+<div class="divider"></div>
+
+<form
+  [formGroup]="productForm"
+  class="grid grid-cols-2 gap-2"
+  (ngSubmit)="onSubmit()"
+>
+  <div class="col-span-2">
+    <div class="flex justify-end h-12">
+      <button class="btn btn-secondary" type="submit">
+        <!-- <span class="loading loading-spinner loading-sm"></span> -->
+        Guardar
+      </button>
+    </div>
+  </div>
+
+  <!-- Left Side -->
+  <div class="flex flex-col gap-2">
+    <!-- Datos generales -->
+    <h2 class="text-lg font-bold">Datos generales</h2>
+    <label for="long" class="block text-sm/6 font-medium">Descripción</label>
+    <input
+      type="text"
+      placeholder="Producto"
+      class="input input-bordered w-full"
+      formControlName="description"
+      [class.border-red-500]="productForm.get('description')?.errors ?? false"
+    />
+    <form-error-label [control]="productForm.get('description')!" />
+
+    <label for="manufacturerName" class="block text-sm/6 font-medium"
+      >Fabricante</label
+    >
+    <input
+      list="manufacturers-list"
+      id="manufacturers-choice"
+      name="ice-cream-choice"
+      type="text"
+      placeholder="Fabricante"
+      class="input input-bordered w-full"
+      formControlName="manufacturerName"
+      [class.border-red-500]="
+        productForm.get('manufacturerName')?.errors ?? false
+      "
+      (change)="onSelectionManufacturerChange($event)"
+    />
+    <datalist
+      id="manufacturers-list"
+      class="datalist datalist-bodered w-full max-h-[100px] overflow-y-auto"
+    >
+      <option disabled selected>Seleccionar un fabricante</option>
+      @for (item of manufacturersResource.value()?.data; track item.id) {
+        <option [value]="item.description" [tabIndex]="item.id"></option>
+      }
+    </datalist>
+    <form-error-label [control]="productForm.get('manufacturerName')!" />
+    <!-- @if (
+      productForm.get("manufacturerName")?.invalid &&
+      (productForm.get("manufacturerName")?.dirty ||
+        productForm.get("manufacturerName")?.touched)
+    ) {
+      @if (productForm.get("manufacturerName")?.hasError("required")) {
+        <div class="field-message text-red-500 text-xs/6">
+          Este campo es requerido
+        </div>
+      }
+      @if (productForm.get("manufacturerName")?.hasError('minlength')) {
+            <div>Name must be at least 4 characters long.</div>
+            }
+      @if (productForm.get("manufacturerName")?.hasError("existsInList")) {
+        <div class="field-message text-red-500 text-xs/6">
+          Este campo no esta registrado
+        </div>
+      }
+    } -->
+    <!-- <form-error-label [control]="productForm.get('manufacturerName')!" />
+    <form-error-label
+      [control]="productForm.get('manufacturerName')?.errors?.['existsInList']"
+    /> -->
+    <!-- @if (
+      productForm.get("manufacturerName")?.errors?.["existsInList"] &&
+      !productForm.get("manufacturerName")?.touched
+    ) {
+      <div class="field-message text-red-500 text-xs/6">
+        El nombre no está en la lista
+      </div>
+    }
+    @if (productForm.get("manufacturerName")?.errors?.["required"]) {
+      <div class="field-message text-red-500 text-xs/6">
+        Este campo es requerido
+      </div>
+    } -->
+
+    <!-- Especificación Técnicas-->
+    <h2 class="text-lg font-bold">Especificaci&oacute;n T&eacute;cnica</h2>
+
+    <div class="grid grid-cols-4 sm:grid-cols-4 gap-4">
+      <div>
+        <label for="long" class="block text-sm/6 font-medium">Largo</label>
+        <input
+          type="number"
+          placeholder="Largo"
+          class="input input-bordered w-full"
+          formControlName="long"
+          [class.border-red-500]="productForm.get('long')?.errors ?? false"
+        />
+        <form-error-label [control]="productForm.get('long')!" />
+      </div>
+      <div>
+        <label for="width" class="block text-sm/6 font-medium">Ancho</label>
+        <input
+          type="number"
+          placeholder="Ancho"
+          class="input input-bordered w-full"
+          formControlName="width"
+          [class.border-red-500]="productForm.get('width')?.errors ?? false"
+        />
+        <form-error-label [control]="productForm.get('width')!" />
+      </div>
+      <div>
+        <label for="thickness" class="block text-sm/6 font-medium"
+          >Espesor</label
+        >
+        <input
+          type="number"
+          placeholder="Espesor"
+          class="input input-bordered w-full"
+          formControlName="thickness"
+          [class.border-red-500]="productForm.get('thickness')?.errors ?? false"
+        />
+        <form-error-label [control]="productForm.get('thickness')!" />
+      </div>
+      <div>
+        <label for="thickness" class="block text-sm/6 font-medium">Color</label>
+        <input
+          type="text"
+          placeholder="Color"
+          class="input input-bordered w-full"
+          formControlName="color"
+          [class.border-red-500]="productForm.get('color')?.errors ?? false"
+        />
+        <form-error-label [control]="productForm.get('color')!" />
+      </div>
+    </div>
+
+    <!-- Especificación Comercial -->
+    <h2 class="text-lg font-bold">Especificaci&oacute;n Comercial</h2>
+
+    <div class="grid grid-cols-4 sm:grid-cols-4 gap-4">
+      <div>
+        <label for="unitMeasurement" class="block text-sm/6 font-medium"
+          >Unidad de medida</label
+        >
+        <input
+          list="unitMeasurements-list"
+          id="ice-cream-choice"
+          name="ice-cream-choice"
+          type="text"
+          placeholder="Unidad de medida"
+          class="input input-bordered w-full"
+          formControlName="unitMeasurement"
+          [class.border-red-500]="
+            productForm.get('unitMeasurement')?.errors ?? false
+          "
+          (change)="onSelectionUnitMeasurementChange($event)"
+        />
+        <datalist
+          id="unitMeasurements-list"
+          class="datalist datalist-bodered w-full max-h-[100px] overflow-y-auto"
+        >
+          <option disabled selected>Seleccionar una unidad de medida</option>
+          @for (item of unitMeasurementsResource.value()?.data; track item.id) {
+            <option [value]="item.description" [tabIndex]="item.id"></option>
+          }
+        </datalist>
+        <form-error-label [control]="productForm.get('unitMeasurement')!" />
+      </div>
+      <div>
+        <label for="unitValue" class="block text-sm/6 font-medium"
+          >Valor unitario</label
+        >
+        <input
+          type="number"
+          placeholder="Valor unitario"
+          class="input input-bordered w-full"
+          formControlName="unitValue"
+          [class.border-red-500]="productForm.get('unitValue')?.errors ?? false"
+        />
+        <form-error-label [control]="productForm.get('unitValue')!" />
+      </div>
+    </div>
+  </div>
+
+  <!-- Right Side -->
+  <div class="flex flex-col gap-2">
+    <!-- Bienes y Servicios -->
+    <h2 class="text-lg font-bold">Bienes y Servicios</h2>
+    <label for="providerName" class="block text-sm/6 font-medium"
+      >Proveedor</label
+    >
+    <input
+      list="providers-list"
+      id="ice-cream-choice"
+      name="ice-cream-choice"
+      type="text"
+      placeholder="Proveedor"
+      class="input input-bordered w-full"
+      formControlName="providerName"
+      [class.border-red-500]="productForm.get('providerName')?.errors ?? false"
+      (change)="onSelectionProviderChange($event)"
+    />
+    <datalist
+      id="providers-list"
+      class="datalist datalist-bodered w-full max-h-[100px] overflow-y-auto"
+    >
+      <option disabled selected>Seleccionar un proveedor</option>
+      @for (item of providersResource.value()?.data; track item.id) {
+        <option [value]="item.personName" [tabIndex]="item.id"></option>
+      }
+    </datalist>
+    <!-- <form-error-label [control]="productForm.get('providerName')!" /> -->
+
+    <label for="categoryName" class="block text-sm/6 font-medium"
+      >Categoria</label
+    >
+    <input
+      list="categories-list"
+      id="ice-cream-choice"
+      name="ice-cream-choice"
+      type="text"
+      placeholder="Categoria"
+      class="input input-bordered w-full"
+      formControlName="categoryName"
+      [class.border-red-500]="productForm.get('categoryName')?.errors ?? false"
+      (change)="onSelectionCategoryChange($event)"
+    />
+    <datalist
+      id="categories-list"
+      class="datalist datalist-bodered w-full max-h-[100px] overflow-y-auto"
+    >
+      <option disabled selected>Seleccionar una categoria</option>
+      @for (item of categoriesResource.value()?.data; track item.id) {
+        <option [value]="item.description" [tabIndex]="item.id"></option>
+      }
+    </datalist>
+    <!-- <form-error-label [control]="productForm.get('categoryName')!" /> -->
+
+    <!--select-->
+    <!-- <label for="providerName" class="block text-sm/6 font-medium"
+      >Proveedor seleccionador 1</label
+    >
+    <select
+      class="select select-bordered w-full"
+      (change)="onSelectionChange($event)"
+    >
+      <option disabled selected>Seleccionar un proveedor</option>
+      @for (item of providersResource.value()?.data; track item.id) {
+        <option [value]="item.id">{{ item.personName }}</option>
+      }
+    </select>
+    <p>Selected ID: {{ selectedValue() }}</p>
+    <form-error-label [control]="productForm.get('providerName')!" /> -->
+    <!--FIN select-->
+  </div>
+</form>
+
+@if (wasSaved()) {
+  <div class="alert alert-success fixed bottom-4 right-4 w-80 animate-fadeIn">
+    <span>Datos actualizados correctamente</span>
+  </div>
+}

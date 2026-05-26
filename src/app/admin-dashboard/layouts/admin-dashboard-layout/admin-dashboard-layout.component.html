@@ -1,0 +1,177 @@
+<!-- https://www.creative-tim.com/twcomponents/component/dashboard-navigation -->
+<div
+  class="bg-slate-800 overflow-y-scroll w-screen h-screen antialiased text-slate-300 selection:bg-blue-600 selection:text-white"
+>
+  <div class="flex flex-col relative w-screen">
+    <div
+      id="menu"
+      class="bg-gray-900 min-h-screen z-10 text-slate-300 w-64 fixed left-0 h-screen overflow-y-scroll"
+    >
+      <div id="logo" class="my-4 px-6">
+        <h1
+          routerLink="/"
+          class="text-lg md:text-2xl font-bold text-white font-montserrat cursor-pointer"
+        >
+          Project<span class="text-blue-500"> | Stone</span>
+        </h1>
+        <p class="text-slate-500 text-sm">
+          Administración de acciones y actividades
+        </p>
+      </div>
+      <div id="profile" class="px-6 py-10">
+        <p class="text-slate-500">Bienvenido,</p>
+        <a href="#" class="inline-flex space-x-2 items-center">
+          <!-- <span>
+            <img
+              class="rounded-full w-8 h-8"
+              src="https://images.unsplash.com/photo-1542909168-82c3e7fdca5c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=128&q=80"
+              alt=""
+            />
+          </span> -->
+          <span class="text-sm md:text-base font-bold">
+            {{ user()?.fullName }}
+          </span>
+        </a>
+      </div>
+      <div id="nav" class="w-full px-6">
+        <ul class="menu bg-base-200 rounded-box w-56">
+          <!-- Ventas -->
+          <li>
+            <details open>
+              <summary>
+                <span class="text-lg font-bold leading-5 text-white"
+                  >Ventas</span
+                >
+              </summary>
+              <ul>
+                <li>
+                  <!-- Budget List -->
+                  <a
+                    routerLink="/admin/budgets"
+                    class="w-full px-2 inline-flex space-x-2 items-center border-b border-slate-700 py-3 hover:bg-white/5 transition ease-linear duration-150"
+                    routerLinkActive="bg-blue-800"
+                  >
+                    <div>
+                      <!-- <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+              class="w-6 h-6 text-white"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z"
+              />
+            </svg> -->
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke-width="0.8"
+                        stroke="currentColor"
+                        class="w-6 h-6 text-white"
+                      >
+                        <path
+                          xmlns="http://www.w3.org/2000/svg"
+                          d="M8,12H16V14H8V12M10,20H6V4H13V9H18V12.1L20,10.1V8L14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H10V20M8,18H12.1L13,17.1V16H8V18M20.2,13C20.3,13 20.5,13.1 20.6,13.2L21.9,14.5C22.1,14.7 22.1,15.1 21.9,15.3L20.9,16.3L18.8,14.2L19.8,13.2C19.9,13.1 20,13 20.2,13M20.2,16.9L14.1,23H12V20.9L18.1,14.8L20.2,16.9Z"
+                        />
+                      </svg>
+                    </div>
+                    <div class="flex flex-col">
+                      <span class="text-lg font-bold leading-5 text-white"
+                        >Presupuestos</span
+                      >
+                      <span class="text-sm text-white/50 hidden md:block"
+                        >Listado de presupuestos</span
+                      >
+                    </div>
+                  </a>
+                </li>
+                <li><a>Submenu 2</a></li>
+                <!-- <li>
+                  <details open>
+                    <summary>Parent</summary>
+                    <ul>
+                      <li><a>Submenu 1</a></li>
+                      <li><a>Submenu 2</a></li>
+                    </ul>
+                  </details>
+                </li> -->
+              </ul>
+            </details>
+          </li>
+          <!-- Administración -->
+          <li>
+            <details open>
+              <summary>
+                <span class="text-lg font-bold leading-5 text-white"
+                  >Administración</span
+                >
+              </summary>
+              <ul>
+                <li>
+                  <!-- Product List -->
+                  <a
+                    routerLink="/admin/products"
+                    class="w-full px-2 inline-flex space-x-2 items-center border-b border-slate-700 py-3 hover:bg-white/5 transition ease-linear duration-150"
+                    routerLinkActive="bg-blue-800"
+                  >
+                    <div>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke-width="0.8"
+                        stroke="currentColor"
+                        class="w-6 h-6 text-white"
+                      >
+                        <path
+                          xmlns="http://www.w3.org/2000/svg"
+                          d="M9,7H13A2,2 0 0,1 15,9V11A2,2 0 0,1 13,13H11V17H9V7M11,9V11H13V9H11M5,3H19A2,2 0 0,1 21,5V19A2,2 0 0,1 19,21H5A2,2 0 0,1 3,19V5A2,2 0 0,1 5,3M5,5V19H19V5H5Z"
+                        />
+                      </svg>
+                    </div>
+                    <div class="flex flex-col">
+                      <span class="text-lg font-bold leading-5 text-white"
+                        >Productos</span
+                      >
+                      <span class="text-sm text-white/50 hidden md:block"
+                        >Listado de productos</span
+                      >
+                    </div>
+                  </a>
+                </li>
+                <li><a>Submenu 2</a></li>
+                <!-- <li>
+                  <details open>
+                    <summary>Parent</summary>
+                    <ul>
+                      <li><a>Submenu 1</a></li>
+                      <li><a>Submenu 2</a></li>
+                    </ul>
+                  </details>
+                </li> -->
+              </ul>
+            </details>
+          </li>
+        </ul>
+
+        <!-- Cerrar sesión -->
+        <div class="mt-10"></div>
+        <button
+          class="btn btn-ghost text-accent w-full bottom-1 absolute text-center"
+          (click)="authService.logout()"
+        >
+          Cerrar sesión
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="flex-1 ml-64 pt-5 px-5">
+    <router-outlet />
+  </div>
+</div>

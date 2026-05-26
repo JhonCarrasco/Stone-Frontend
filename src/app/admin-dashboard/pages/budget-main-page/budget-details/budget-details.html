@@ -1,0 +1,430 @@
+<h1 class="text-2xl font-bold">
+  Proyecto {{ budget().id ? budget().id : '' }}: {{ budget().projectName }}
+</h1>
+<div class="divider col-span-2"></div>
+@if(budget().id === null || budget().id === undefined || budget().id === 0) {
+<search-customer (customerEvent)="onSelectionCustomerChange($event)" />
+}
+
+<form [formGroup]="budgetForm" (ngSubmit)="onSubmit()">
+  <div class="grid grid-cols-2 gap-2">
+    <!--GUARDAR-->
+    <div class="col-span-2">
+      <div class="flex justify-end h-12">
+        <button class="btn btn-secondary" type="submit">
+          <!-- <span class="loading loading-spinner loading-sm"></span> -->
+          Guardar
+        </button>
+      </div>
+    </div>
+
+    <!-- Left Side -->
+    <div class="flex flex-col gap-2 border-r border-gray-300 pr-4">
+      <div class="border-b border-gray-900/10 pb-12">
+        <h2 class="text-lg font-bold">Informaci&oacute;n Presupuesto</h2>
+        <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+          <div class="sm:col-span-3">
+            <label for="first-name" class="block text-sm/6 font-medium"
+              >Proyecto</label
+            >
+            <div class="mt-2">
+              <input
+                id="projectName"
+                type="text"
+                name="projectName"
+                placeholder="Nombre del Proyecto"
+                [class.border-red-500]="budgetForm.get('projectName')?.errors ?? false"
+                class="input input-bordered w-full"
+                formControlName="projectName"
+                (change)="onInputBudgetDetailChange($event)"
+              />
+            </div>
+            <form-error-label [control]="budgetForm.get('projectName')!" />
+          </div>
+
+          <div class="sm:col-span-3 justify-self-end">
+            <label for="first-name" class="block text-sm/6 font-medium"
+              >Estado</label
+            >
+            <div class="mt-2">
+              <select
+                class="select select-bordered w-full max-w-xs"
+                (change)="onSelectedStateChange($event)"
+              >
+                <option disabled>Seleccionar estado del presupuesto</option>
+                @for (item of statesBudget(); track item.id) {
+                @if(stateDescriptionSelected() === item.description ){
+                <option selected [value]="item.id">{{item.description}}</option>
+                }@else {
+                <option [value]="item.id">{{item.description}}</option>
+                } }
+              </select>
+              <!-- <p>Currently selected: {{ stateDescriptionSelected() }}</p> -->
+            </div>
+            <form-error-label [control]="budgetForm.get('state')!" />
+          </div>
+
+          <div class="sm:col-span-6">
+            <label for="first-name" class="block text-sm/6 font-medium"
+              >Descripci&oacute;n</label
+            >
+            <div class="mt-2">
+              <input
+                id="description"
+                type="text"
+                name="description"
+                placeholder="Descripción"
+                [class.border-red-500]="budgetForm.get('description')?.errors ?? false"
+                class="input input-bordered w-full"
+                formControlName="description"
+                (change)="onInputBudgetDetailChange($event)"
+              />
+            </div>
+            <form-error-label [control]="budgetForm.get('description')!" />
+          </div>
+
+          <div class="sm:col-span-3">
+            <label for="first-name" class="block text-sm/6 font-medium"
+              >Material</label
+            >
+            <div class="mt-2">
+              <input
+                id="material"
+                type="text"
+                name="material"
+                placeholder="Material"
+                [class.border-red-500]="budgetForm.get('material')?.errors ?? false"
+                class="input input-bordered w-full"
+                formControlName="material"
+                (change)="onInputBudgetDetailChange($event)"
+              />
+            </div>
+            <form-error-label [control]="budgetForm.get('material')!" />
+          </div>
+
+          <div class="sm:col-span-3">
+            <label for="first-name" class="block text-sm/6 font-medium"
+              >Fecha Creaci&oacute;n</label
+            >
+            <div class="mt-2">
+              <input
+                id="createAt"
+                type="text"
+                name="createAt"
+                placeholder="Fecha de Creación"
+                [class.border-red-500]="budgetForm.get('createAt')?.errors ?? false"
+                class="input input-bordered w-full"
+                formControlName="createAt"
+                (change)="onInputBudgetDetailChange($event)"
+              />
+            </div>
+            <form-error-label [control]="budgetForm.get('createAt')!" />
+          </div>
+
+          <div class="sm:col-span-6">
+            <label for="first-name" class="block text-sm/6 font-medium"
+              >Direcci&oacute;n</label
+            >
+            <div class="mt-2">
+              <input
+                id="address"
+                type="text"
+                name="address"
+                placeholder="Dirección"
+                [class.border-red-500]="budgetForm.get('address')?.errors ?? false"
+                class="input input-bordered w-full"
+                formControlName="address"
+                (change)="onInputBudgetDetailChange($event)"
+              />
+            </div>
+            <form-error-label [control]="budgetForm.get('address')!" />
+          </div>
+
+          <div class="sm:col-span-3">
+            <div class="sm:col-span-3">
+              <label for="first-name" class="block text-sm/6 font-medium"
+                >Representante/Contacto</label
+              >
+              <div class="mt-2">
+                <input
+                  id="contactPerson"
+                  type="text"
+                  name="contactPerson"
+                  placeholder="Representante/Contacto"
+                  [class.border-red-500]="budgetForm.get('contactPerson')?.errors ?? false"
+                  class="input input-bordered w-full"
+                  formControlName="contactPerson"
+                  (change)="onInputBudgetDetailChange($event)"
+                />
+              </div>
+              <form-error-label [control]="budgetForm.get('contactPerson')!" />
+            </div>
+
+            <div class="sm:col-span-3">
+              <label for="first-name" class="block text-sm/6 font-medium"
+                >Tel&eacute;fono Contacto</label
+              >
+              <div class="mt-2">
+                <input
+                  id="phoneContact"
+                  type="text"
+                  name="phoneContact"
+                  placeholder="Teléfono de contacto"
+                  [class.border-red-500]="budgetForm.get('phoneContact')?.errors ?? false"
+                  class="input input-bordered w-full"
+                  formControlName="phoneContact"
+                  (change)="onInputBudgetDetailChange($event)"
+                />
+              </div>
+              <form-error-label [control]="budgetForm.get('phoneContact')!" />
+            </div>
+          </div>
+
+          <div class="sm:col-span-3 justify-self-end">
+            <label for="first-name" class="block text-sm/6 font-medium"
+              >Zona</label
+            >
+            <div class="mt-2">
+              <select
+                class="select select-bordered w-full max-w-xs"
+                (change)="onSelectedZoneChange($event)"
+              >
+                <option disabled>Seleccionar zona de la obra</option>
+                @for (item of zoneList(); track item.id) {
+                @if(zoneDescriptionSelected() === item.description ){
+                <option selected [value]="item.id">{{item.description}}</option>
+                }@else {
+                <option [value]="item.id">{{item.description}}</option>
+                } }
+              </select>
+              <!-- <p>Currently selected: {{ zoneDescriptionSelected() }}</p> -->
+            </div>
+            <form-error-label [control]="budgetForm.get('zone')!" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Side -->
+    <div class="flex flex-col gap-2">
+      <div class="border-b border-gray-900/10 pb-12">
+        <h2 class="text-lg font-bold">Informaci&oacute;n Cliente</h2>
+        <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+          <div class="sm:col-span-6">
+            <label for="first-name" class="block text-sm/6 font-medium"
+              >Raz&oacute;n Social</label
+            >
+            <div class="mt-2">
+              <input
+                readonly
+                id="displayName"
+                type="text"
+                name="displayName"
+                placeholder="Raz&oacute;n Social"
+                [class.border-red-500]="budgetForm.get('displayName')?.errors ?? false"
+                class="input input-bordered w-full"
+                formControlName="displayName"
+                (change)="onInputBudgetDetailChange($event)"
+              />
+            </div>
+            <form-error-label [control]="budgetForm.get('displayName')!" />
+          </div>
+
+          <div class="sm:col-span-4">
+            <label for="first-name" class="block text-sm/6 font-medium"
+              >Email</label
+            >
+            <div class="mt-2">
+              <input
+                readonly
+                id="email"
+                type="text"
+                name="email"
+                placeholder="Email"
+                [class.border-red-500]="budgetForm.get('email')?.errors ?? false"
+                class="input input-bordered w-full"
+                formControlName="email"
+                (change)="onInputBudgetDetailChange($event)"
+              />
+            </div>
+            <form-error-label [control]="budgetForm.get('email')!" />
+          </div>
+
+          <div class="sm:col-span-2">
+            <label for="first-name" class="block text-sm/6 font-medium"
+              >Tel&eacute;fono</label
+            >
+            <div class="mt-2">
+              <input
+                readonly
+                id="phone"
+                type="text"
+                name="phone"
+                placeholder="Teléfono"
+                [class.border-red-500]="budgetForm.get('phone')?.errors ?? false"
+                class="input input-bordered w-full"
+                formControlName="phone"
+                (change)="onInputBudgetDetailChange($event)"
+              />
+            </div>
+            <form-error-label [control]="budgetForm.get('phone')!" />
+          </div>
+        </div>
+      </div>
+      <div class="border-b border-gray-900/10 pb-12">
+        <h2 class="text-lg font-bold">Informaci&oacute;n Coste</h2>
+        <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+          <div class="sm:col-span-3">
+            <label for="first-name" class="block text-sm/6 font-medium"
+              >Subtotal</label
+            >
+            <div class="mt-2">
+              <input
+                readonly
+                id="subTotal"
+                type="text"
+                name="subTotal"
+                placeholder="Subtotal"
+                [class.border-red-500]="budgetForm.get('subTotal')?.errors ?? false"
+                class="input input-bordered w-full"
+                formControlName="subTotal"
+                (change)="onInputBudgetDetailChange($event)"
+                value="{{ subTotalCost() }}"
+              />
+            </div>
+            <form-error-label [control]="budgetForm.get('subTotal')!" />
+          </div>
+
+          <div class="sm:col-span-3">
+            <label for="first-name" class="block text-sm/6 font-medium"
+              >Neto</label
+            >
+            <div class="mt-2">
+              <input
+                readonly
+                id="neto"
+                type="text"
+                name="neto"
+                placeholder="Neto"
+                [class.border-red-500]="budgetForm.get('neto')?.errors ?? false"
+                class="input input-bordered w-full"
+                formControlName="neto"
+                (change)="onInputBudgetDetailChange($event)"
+                value="{{ netoCost() }}"
+              />
+            </div>
+            <form-error-label [control]="budgetForm.get('neto')!" />
+          </div>
+
+          <div class="sm:col-span-3">
+            <label for="first-name" class="block text-sm/6 font-medium"
+              >Iva</label
+            >
+            <div class="mt-2">
+              <input
+                readonly
+                id="taxRate"
+                type="text"
+                name="taxRate"
+                placeholder="Iva"
+                [class.border-red-500]="budgetForm.get('taxRate')?.errors ?? false"
+                class="input input-bordered w-full"
+                formControlName="taxRate"
+                (change)="onInputBudgetDetailChange($event)"
+                value="{{ taxRateCost() }}"
+              />
+            </div>
+            <form-error-label [control]="budgetForm.get('taxRate')!" />
+          </div>
+
+          <div class="sm:col-span-3">
+            <label for="first-name" class="block text-sm/6 font-medium"
+              >Monto Iva</label
+            >
+            <div class="mt-2">
+              <input
+                readonly
+                id="taxRateTotal"
+                type="text"
+                name="taxRateTotal"
+                placeholder="Monto Iva"
+                [class.border-red-500]="budgetForm.get('taxRateTotal')?.errors ?? false"
+                class="input input-bordered w-full"
+                formControlName="taxRateTotal"
+                (change)="onInputBudgetDetailChange($event)"
+                value="{{ taxRateCostTotal() }}"
+              />
+            </div>
+            <form-error-label [control]="budgetForm.get('taxRateTotal')!" />
+          </div>
+
+          <div class="sm:col-span-3">
+            <label for="first-name" class="block text-sm/6 font-medium"
+              >Total</label
+            >
+            <div class="mt-2">
+              <input
+                readonly
+                id="totalValue"
+                type="text"
+                name="totalValue"
+                placeholder="Total"
+                [class.border-red-500]="budgetForm.get('totalValue')?.errors ?? false"
+                class="input input-bordered w-full"
+                formControlName="totalValue"
+                (change)="onInputBudgetDetailChange($event)"
+                value="{{ totalValueCost() }}"
+              />
+            </div>
+            <form-error-label [control]="budgetForm.get('totalValue')!" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Abajo full anchura - Itemizados-->
+  <div class="flex flex-col gap-2 border-t border-gray-300 pr-4">
+    <div class="border-b border-gray-900/10 pb-12">
+      <h2 class="text-lg font-bold">
+        Itemizado de Piezas y Servicios Incluidos
+      </h2>
+      <div class="mt-14 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+        <div class="sm:col-span-6">
+          <details class="collapse collapse-arrow bg-base-200">
+            <summary class="collapse-title text-xl font-medium">
+              Itemizado de Productos
+            </summary>
+            <div class="collapse-content">
+              <itemized-product-table
+                [itemizedProductsInput]="budget().itemizedProducts"
+                (itemizedProductsEvent)="onItemizedProductsChange($event)"
+              />
+            </div>
+          </details>
+        </div>
+      </div>
+      <div class="mt-14 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+        <div class="sm:col-span-6">
+          <details class="collapse collapse-arrow bg-base-200">
+            <summary class="collapse-title text-xl font-medium">
+              Itemizado de Servicios
+            </summary>
+            <div class="collapse-content">
+              <itemized-service-table
+                [itemizedServicesInput]="budget().itemizedServices"
+                (itemizedServicesEvent)="onItemizedServicesChange($event)"
+              />
+            </div>
+          </details>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
+
+@if (wasSaved()) {
+<div class="alert alert-success fixed bottom-4 right-4 w-80 animate-fadeIn">
+  <span>Datos actualizados correctamente</span>
+</div>
+}
