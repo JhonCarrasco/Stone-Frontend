@@ -52,20 +52,6 @@
                     routerLinkActive="bg-blue-800"
                   >
                     <div>
-                      <!-- <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke-width="1.5"
-              stroke="currentColor"
-              class="w-6 h-6 text-white"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z"
-              />
-            </svg> -->
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         viewBox="0 0 24 24"
@@ -139,7 +125,7 @@
                         >Productos</span
                       >
                       <span class="text-sm text-white/50 hidden md:block"
-                        >Listado de productos</span
+                        >Mantenedor de productos</span
                       >
                     </div>
                   </a>
@@ -154,6 +140,114 @@
                     </ul>
                   </details>
                 </li> -->
+              </ul>
+            </details>
+          </li>
+          <!-- Bodega -->
+          <li>
+            <details open>
+              <summary>
+                <span class="text-lg font-bold leading-5 text-white"
+                  >Bodega</span
+                >
+              </summary>
+              <ul>
+                <!-- Recepción de mercaderia -->
+                <li>
+                  <a
+                    routerLink="/admin/materials/reception"
+                    class="w-full px-2 inline-flex space-x-2 items-center border-b border-slate-700 py-3 hover:bg-white/5 transition ease-linear duration-150"
+                    routerLinkActive="bg-blue-800"
+                  >
+                    <div>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke-width="0.8"
+                        stroke="currentColor"
+                        class="w-6 h-6 text-white"
+                      >
+                        <path
+                          xmlns="http://www.w3.org/2000/svg"
+                          d="M8,12H16V14H8V12M10,20H6V4H13V9H18V12.1L20,10.1V8L14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H10V20M8,18H12.1L13,17.1V16H8V18M20.2,13C20.3,13 20.5,13.1 20.6,13.2L21.9,14.5C22.1,14.7 22.1,15.1 21.9,15.3L20.9,16.3L18.8,14.2L19.8,13.2C19.9,13.1 20,13 20.2,13M20.2,16.9L14.1,23H12V20.9L18.1,14.8L20.2,16.9Z"
+                        />
+                      </svg>
+                    </div>
+                    <div class="flex flex-col">
+                      <span class="text-lg font-bold leading-5 text-white"
+                        >Recepción de mercadería</span
+                      >
+                      <span class="text-sm text-white/50 hidden md:block"
+                        >Facturas/Guía</span
+                      >
+                    </div>
+                  </a>
+                </li>
+                <!-- Despacho de mercaderia -->
+                <li>
+                  <a
+                    routerLink="/admin/materials/dispatch"
+                    class="w-full px-2 inline-flex space-x-2 items-center border-b border-slate-700 py-3 hover:bg-white/5 transition ease-linear duration-150"
+                    routerLinkActive="bg-blue-800"
+                  >
+                    <div>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke-width="0.8"
+                        stroke="currentColor"
+                        class="w-6 h-6 text-white"
+                      >
+                        <path
+                          xmlns="http://www.w3.org/2000/svg"
+                          d="M8,12H16V14H8V12M10,20H6V4H13V9H18V12.1L20,10.1V8L14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H10V20M8,18H12.1L13,17.1V16H8V18M20.2,13C20.3,13 20.5,13.1 20.6,13.2L21.9,14.5C22.1,14.7 22.1,15.1 21.9,15.3L20.9,16.3L18.8,14.2L19.8,13.2C19.9,13.1 20,13 20.2,13M20.2,16.9L14.1,23H12V20.9L18.1,14.8L20.2,16.9Z"
+                        />
+                      </svg>
+                    </div>
+                    <div class="flex flex-col">
+                      <span class="text-lg font-bold leading-5 text-white"
+                        >Despacho de mercadería</span
+                      >
+                      <span class="text-sm text-white/50 hidden md:block"
+                        >Despacho/Devolución</span
+                      >
+                    </div>
+                  </a>
+                </li>
+                <!-- Entrega de mercaderia -->
+                <li>
+                  <a
+                    routerLink="/admin/materials/voucher"
+                    class="w-full px-2 inline-flex space-x-2 items-center border-b border-slate-700 py-3 hover:bg-white/5 transition ease-linear duration-150"
+                    routerLinkActive="bg-blue-800"
+                  >
+                    <div>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke-width="0.8"
+                        stroke="currentColor"
+                        class="w-6 h-6 text-white"
+                      >
+                        <path
+                          xmlns="http://www.w3.org/2000/svg"
+                          d="M8,12H16V14H8V12M10,20H6V4H13V9H18V12.1L20,10.1V8L14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H10V20M8,18H12.1L13,17.1V16H8V18M20.2,13C20.3,13 20.5,13.1 20.6,13.2L21.9,14.5C22.1,14.7 22.1,15.1 21.9,15.3L20.9,16.3L18.8,14.2L19.8,13.2C19.9,13.1 20,13 20.2,13M20.2,16.9L14.1,23H12V20.9L18.1,14.8L20.2,16.9Z"
+                        />
+                      </svg>
+                    </div>
+                    <div class="flex flex-col">
+                      <span class="text-lg font-bold leading-5 text-white"
+                        >Entrega de mercadería</span
+                      >
+                      <span class="text-sm text-white/50 hidden md:block"
+                        >Cupón de consumo</span
+                      >
+                    </div>
+                  </a>
+                </li>
               </ul>
             </details>
           </li>

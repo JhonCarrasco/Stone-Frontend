@@ -4,7 +4,6 @@ import { RouterLink } from '@angular/router';
 import { PaginationComponent } from '@shared/components/pagination/pagination.component';
 import { PaginationService } from '@shared/components/pagination/pagination.service';
 import { SearchBudget } from '@shared/components/search-budget/search-budget';
-import { Budget } from '@shared/models/budget.model';
 import { BudgetTable } from 'src/app/budgets/components/budget-table/budget-table';
 import { BudgetService } from 'src/app/services/budgetService';
 

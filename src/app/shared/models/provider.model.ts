@@ -1,11 +1,11 @@
 export interface Provider {
-  id: number;
-  active: boolean;
-  createAt?: Date;
-  updatedAt?: Date;
-  personName: string;
-  personId: number;
-  locationId: number;
-  bankAccountId: number;
+  id?: number;
+  active?: null;
+  createAt?: null;
+  updatedAt?: null;
+  personName?: string;
+  personId?: number;
+  locationId?: number;
+  bankAccountId?: number;
   contacts?: null;
 }

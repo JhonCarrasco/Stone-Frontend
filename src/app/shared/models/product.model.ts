@@ -4,6 +4,7 @@ export interface Product {
   createAt?: Date;
   updatedAt?: Date;
   description: string;
+  productCode: string;
   long?: number;
   width?: number;
   thickness?: number;
