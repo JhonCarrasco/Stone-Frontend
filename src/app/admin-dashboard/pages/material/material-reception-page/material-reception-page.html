@@ -1,0 +1,10 @@
+@if (materialsResource.isLoading()) {
+<div class="flex justify-center items-center h-screen">
+  <span class="loading loading-spinner loading-lg"></span>
+</div>
+} @if (materialsResource.hasValue() && materialsResource.value()?.data != null)
+{
+<!-- Material -->
+
+<!-- <material-details [material]="materialsResource.value()?.data!" /> -->
+}

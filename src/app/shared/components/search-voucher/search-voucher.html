@@ -1,0 +1,33 @@
+<div class="flex justify-start content-center border-b border-gray-900/10">
+  <div class="col-span-3 ml-4 w-1/2">
+    <input
+      list="searchVoucherText-list"
+      id="search-voucher-text"
+      type="text"
+      name="searchVoucherText"
+      placeholder="Buscar voucher"
+      class="input input-bordered w-full"
+      (change)="onSelectionSearchVoucherChange($event)"
+      [value]="searchVoucherText()"
+    />
+    <!-- <datalist
+      id="searchVoucherText-list"
+      class="datalist datalist-bodered w-full max-h-[100px] overflow-y-auto"
+    >
+      <option disabled selected>Seleccionar un Producto</option>
+      @for (item of productsFound(); track item.id) {
+      <option [value]="item.projectName" [tabIndex]="item.id"></option>
+      }
+    </datalist> -->
+  </div>
+
+  <div class="col-span-2 ml-2">
+    <button
+      class="btn btn-primary"
+      type="button"
+      (click)="onSearchVoucherBtn()"
+    >
+      Buscar
+    </button>
+  </div>
+</div>

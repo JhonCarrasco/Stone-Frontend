@@ -1,0 +1,27 @@
+<div class="flex gap-2 items-center h-20">
+  <app-pagination
+    [pages]="dispatchesResource.value()?.pages ?? 0"
+    [currentPage]="paginationService.currentPage()"
+  />
+
+  <select
+    class="select select-bordered w-32"
+    (change)="elementsPerPage.set(+selectPerPage.value)"
+    #selectPerPage
+  >
+    <option value="10">10</option>
+    <!-- <option value="20">20</option>
+    <option value="50">50</option> -->
+    <option value="100">100</option>
+  </select>
+
+  <div class="flex-1">
+    <search-dispatch (dispatchEvent)="onSearchDispatchChange($event)" />
+  </div>
+
+  <button class="btn btn-primary" routerLink="/admin/materials/dispatch/new">
+    Nuevo
+  </button>
+</div>
+
+<dispatch-table [dispatches]="dispatchesResource.value()?.data ?? []" />

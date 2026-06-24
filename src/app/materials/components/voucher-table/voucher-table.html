@@ -1,0 +1,55 @@
+<div class="overflow-x-auto bg-gray-900 rounded-2xl p-4">
+  <table class="table">
+    <!-- head -->
+    <thead>
+      <tr>
+        <th>
+          <label>
+            <input type="checkbox" class="checkbox" />
+          </label>
+        </th>
+        <th>ID</th>
+        <th>Presupuesto</th>
+        <th>Fecha</th>
+        <th>Proyecto</th>
+        <th>Entregado a</th>
+        <th>Observación</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- row 1 -->
+      @if(vouchers() == null || vouchers().length == 0) {
+      <tr>
+        <td colspan="8">
+          <div class="alert alert-info">
+            <span>No hay comprobantes disponibles</span>
+          </div>
+        </td>
+      </tr>
+      } @for (item of vouchers(); track item.id) {
+      <tr>
+        <th>
+          <label>
+            <input type="checkbox" class="checkbox" />
+          </label>
+        </th>
+        <td>{{ item.id }}</td>
+        <td>{{ item.budgetId }}</td>
+        <td>{{ item.createAt }}</td>
+        <td>{{ item.projectTo }}</td>
+        <td>{{ item.supplierTo }}</td>
+        <td>{{ item.observations }}</td>
+        <!-- <td>{{ onStateDescription(item.state) }}</td> -->
+        <th>
+          <a
+            [routerLink]="['/admin/materials/voucher', item.id]"
+            class="btn btn-ghost text-accent btn-xs"
+            >Detalles</a
+          >
+        </th>
+      </tr>
+      }
+    </tbody>
+  </table>
+</div>

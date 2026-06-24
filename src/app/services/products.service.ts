@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { inject, Injectable } from '@angular/core';
+import { inject, Injectable, provideZoneChangeDetection } from '@angular/core';
 import { User } from '@auth/interfaces/user.interface';
 // import { Gender, Product_Old } from '@products/interfaces/product.interface';
 import {
@@ -32,6 +32,7 @@ const emptyProduct: Product = {
   createAt: new Date(),
   updatedAt: undefined,
   description: '',
+  productCode: '',
   long: 0,
   width: 0,
   thickness: 0,

@@ -15,7 +15,7 @@ import { SharedService } from 'src/app/services/shared.services';
 import {
   ItemizedProduct,
   ItemizedService,
-} from '../../../../shared/models/budget.model';
+} from '../../../../../shared/models/budget.model';
 import { SearchCustomer } from '@shared/components/search-customer/search-customer';
 import { Customer } from '@shared/models/customer.model';
 import { ItemizedProductTable } from 'src/app/budgets/components/itemizedProduct-table/itemizedProduct-table';
@@ -24,7 +24,7 @@ import { firstValueFrom } from 'rxjs';
 import {
   getStateDescription,
   statesBudget,
-} from '../../../../constant/budgetData';
+} from '../../../../../constant/budgetData';
 import { CustomerService } from 'src/app/services/customer.service';
 import { getZoneDescription, zoneList } from 'src/app/constant/zoneData';
 import { environment } from 'src/environments/environment';

@@ -1,0 +1,53 @@
+<div class="overflow-x-auto bg-gray-900 rounded-2xl p-4">
+  <table class="table">
+    <!-- head -->
+    <thead>
+      <tr>
+        <th>
+          <label>
+            <input type="checkbox" class="checkbox" />
+          </label>
+        </th>
+        <th>Folio</th>
+        <th>Tipo</th>
+        <th>Fecha</th>
+        <th>Cliente</th>
+        <th>Proveedor</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- row 1 -->
+      @if(dispatches() == null || dispatches().length == 0) {
+      <tr>
+        <td colspan="8">
+          <div class="alert alert-info">
+            <span>No hay guías de despacho disponibles</span>
+          </div>
+        </td>
+      </tr>
+      } @for (item of dispatches(); track item.id) {
+      <tr>
+        <th>
+          <label>
+            <input type="checkbox" class="checkbox" />
+          </label>
+        </th>
+        <td>{{ item.folio }}</td>
+        <td>{{ item.documentType }}</td>
+        <td>{{ item.guideDate }}</td>
+        <td>{{ item.customer.displayName }}</td>
+        <td>{{ item.provider.personName }}</td>
+        <!-- <td>{{ onStateDescription(item.state) }}</td> -->
+        <th>
+          <a
+            [routerLink]="['/admin/materials/reception', item.id]"
+            class="btn btn-ghost text-accent btn-xs"
+            >Detalles</a
+          >
+        </th>
+      </tr>
+      }
+    </tbody>
+  </table>
+</div>

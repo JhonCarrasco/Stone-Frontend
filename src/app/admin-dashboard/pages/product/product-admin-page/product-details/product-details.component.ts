@@ -3,14 +3,11 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ProductsService } from 'src/app/services/products.service';
 import { Product } from '@shared/models/product.model';
-import { FormUtils } from 'src/app/utils/form-utils';
-import { BaseResponseGeneric } from '../../../../shared/models/baseResponseGeneric.model';
 import { firstValueFrom } from 'rxjs';
 import { FormErrorLabelComponent } from '@shared/components/form-error-label/form-error-label.component';
 import { ProviderService } from 'src/app/services/providerService';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { SharedService } from 'src/app/services/shared.services';
-import { existsInListValidator } from 'src/app/utils/validator-utils';
 
 @Component({
   selector: 'product-details',
@@ -45,6 +42,7 @@ export class ProductDetailsComponent implements OnInit {
     active: [true],
     createAt: [null as Date | null],
     updatedAt: [null as Date | null],
+    productCode: ['', Validators.required],
     description: ['', Validators.required],
     long: [0, [Validators.required, Validators.min(0)]],
     width: [0, [Validators.required, Validators.min(0)]],

@@ -21,6 +21,17 @@
   <div class="flex flex-col gap-2">
     <!-- Datos generales -->
     <h2 class="text-lg font-bold">Datos generales</h2>
+
+    <label for="long" class="block text-sm/6 font-medium">Código</label>
+    <input
+      type="text"
+      placeholder="Código"
+      class="input input-bordered w-full"
+      formControlName="productCode"
+      [class.border-red-500]="productForm.get('productCode')?.errors ?? false"
+    />
+    <form-error-label [control]="productForm.get('productCode')!" />
+
     <label for="long" class="block text-sm/6 font-medium">Descripción</label>
     <input
       type="text"

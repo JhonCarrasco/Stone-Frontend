@@ -10,4 +10,5 @@ export interface Options {
   limit?: number;
   offset?: number;
   searchText?: string;
+  uri?: string;
 }
