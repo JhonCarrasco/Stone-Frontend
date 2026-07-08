@@ -1,6 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { PaginationComponent } from '@shared/components/pagination/pagination.component';
 import { PaginationService } from '@shared/components/pagination/pagination.service';
 import { SearchReception } from '@shared/components/search-reception/search-reception';
@@ -16,8 +16,27 @@ const uriService = 'materials/receptions';
 export class MaterialsReceptionPage {
   materialService = inject(MaterialService);
   paginationService = inject(PaginationService);
+  activatedRoute = inject(ActivatedRoute);
   elementsPerPage = signal(10);
   searchText = signal('');
+  // modulePath = signal('');
+
+  // ngOnInit(): void {
+  //   this.activatedRoute.url.subscribe((resp) => {
+  //     console.log('MaterialsReceptionPage.ngOnInit.modulePath', resp[1].path);
+  //     switch (resp[1].path) {
+  //       case 'reception':
+  //         this.modulePath.set('reception');
+  //         break;
+  //       case 'dispatch':
+  //         this.modulePath.set('dispatch');
+  //         break;
+  //       case 'voucher':
+  //         this.modulePath.set('voucher');
+  //         break;
+  //     }
+  //   }); // UrlSegment[]
+  // }
 
   receptionsResource = rxResource({
     request: () => ({

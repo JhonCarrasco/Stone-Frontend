@@ -172,7 +172,7 @@ export class ProductDetailsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log('product-details', this.product());
+    // console.log('product-details', this.product());
     this.setFormValue(this.product());
   }
 

@@ -5,6 +5,5 @@
 } @if (materialsResource.hasValue() && materialsResource.value()?.data != null)
 {
 <!-- Material -->
-
-<!-- <material-details [material]="materialsResource.value()?.data!" /> -->
+<reception-details [objInput]="materialsResource.value()?.data!"></reception-details>
 }

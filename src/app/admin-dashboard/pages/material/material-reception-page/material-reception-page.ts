@@ -1,13 +1,14 @@
-import { Component, effect, inject } from '@angular/core';
+import { Component, effect, inject, signal } from '@angular/core';
 import { toSignal, rxResource } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { map } from 'rxjs';
 import { BudgetService } from 'src/app/services/budgetService';
 import { MaterialService } from 'src/app/services/materialService';
+import { ReceptionDetails } from './reception-details/reception-details';
 
 @Component({
   selector: 'material-reception-page',
-  imports: [],
+  imports: [ReceptionDetails],
   templateUrl: './material-reception-page.html',
 })
 export class MaterialReceptionPage {
@@ -22,7 +23,10 @@ export class MaterialReceptionPage {
   materialsResource = rxResource({
     request: () => ({ id: this.materialId() }),
     loader: ({ request }) => {
-      return this.materialService.getMaterialById(request.id);
+      return this.materialService.getMaterialById(
+        request.id,
+        'materials/receptions',
+      );
     },
   });
 

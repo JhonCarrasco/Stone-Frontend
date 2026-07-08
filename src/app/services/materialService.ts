@@ -36,6 +36,7 @@ const emptyMaterialGuide: MaterialGuideGeneric = {
     bankAccount: null,
     contacts: null,
   },
+  customerId: 0,
   provider: {
     id: 0,
     active: null,
@@ -47,6 +48,7 @@ const emptyMaterialGuide: MaterialGuideGeneric = {
     bankAccountId: 0,
     contacts: null,
   },
+  providerId: 0,
   neto: 0,
   taxRate: 0,
   totalValue: 0,
@@ -100,6 +102,7 @@ export class MaterialService {
 
   getMaterialById(
     id: string,
+    uri: string,
   ): Observable<BaseResponseGeneric<MaterialGuideGeneric>> {
     if (id === 'new') {
       return of({
@@ -112,7 +115,7 @@ export class MaterialService {
     }
 
     return this.http
-      .get<BaseResponseGeneric<MaterialGuideGeneric>>(`${baseUrl}/uri/${id}`)
+      .get<BaseResponseGeneric<MaterialGuideGeneric>>(`${baseUrl}/${uri}/${id}`)
       .pipe(
         tap((obj) => this.guideCache.set(id, obj)),
         // tap((obj) => console.log('service.getMaterialById', obj)),

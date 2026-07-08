@@ -51,22 +51,23 @@ export class ItemizedProductTable implements OnInit {
   }
 
   onEditItemizedProduct(item: ItemizedProduct) {
-    this.itemizedProductForm.setValue({
-      id: item.id,
-      active: item.active,
-      createAt: item.createAt,
-      updatedAt: item.updatedAt,
-      description: item.description,
-      long: item.long,
-      width: item.width,
-      thickness: item.thickness,
-      color: item.color,
-      material: item.material,
-      unitValue: item.unitValue,
-      amount: item.amount,
-      totalValue: item.totalValue,
-      budgetId: item.budgetId,
-    });
+    this.itemizedProductForm.setValue({ ...item });
+    // this.itemizedProductForm.setValue({
+    //   id: item.id,
+    //   active: item.active,
+    //   createAt: item.createAt,
+    //   updatedAt: item.updatedAt,
+    //   description: item.description,
+    //   long: item.long,
+    //   width: item.width,
+    //   thickness: item.thickness,
+    //   color: item.color,
+    //   material: item.material,
+    //   unitValue: item.unitValue,
+    //   amount: item.amount,
+    //   totalValue: item.totalValue,
+    //   budgetId: item.budgetId,
+    // });
   }
 
   onInputTextChange(event: Event) {
@@ -111,6 +112,10 @@ export class ItemizedProductTable implements OnInit {
       this.itemizedProductsEvent.emit(this.itemizedProducts());
     }
 
+    this.resetForm();
+  }
+
+  resetForm() {
     this.itemizedProductForm.reset({
       id: 0,
       active: true,
