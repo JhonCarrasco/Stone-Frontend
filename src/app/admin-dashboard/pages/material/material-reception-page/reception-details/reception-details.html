@@ -1,0 +1,283 @@
+<h1 class="text-2xl font-bold">
+  Recepción {{ objInput().id ? objInput().id : 'Nuevo' }}
+</h1>
+<div class="divider col-span-2"></div>
+
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <div class="grid grid-cols-2 gap-2">
+    <!--GUARDAR-->
+    <div class="col-span-2">
+      <div class="flex justify-end h-12">
+        <button class="btn btn-secondary" type="submit">
+          <!-- <span class="loading loading-spinner loading-sm"></span> -->
+          Guardar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Top full width - titulo - Informacion ingreso de mercaderia-->
+  <div class="flex flex-col gap-2 border-t border-gray-300 pr-4">
+    <div class="border-b border-gray-900/10">
+      <h2 class="text-lg font-bold">Ingreso de Mercaderia</h2>
+    </div>
+  </div>
+
+  <!-- full informacion -->
+  <div class="flex flex-col gap-2 border-gray-300 pr-2">
+    <div class="border-b border-gray-900/10 pb-12">
+      <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+        <div class="sm:col-span-2">
+          <label for="first-name" class="block text-sm/6 font-medium"
+            >Tipo de Documento</label
+          >
+          <div class="mt-2">
+            <select
+              class="select select-bordered w-full"
+              (change)="onSelectedDocumentTypeChange($event)"
+            >
+              <option disabled>Seleccionar moneda</option>
+              @for (item of documentType(); track item.id) {
+              @if(documentTypeDescriptionSelected() === item.description ){
+              <option selected [value]="item.id">{{item.description}}</option>
+              }@else {
+              <option [value]="item.id">{{item.description}}</option>
+              } }
+            </select>
+          </div>
+          <form-error-label [control]="form.get('currencyType')!" />
+        </div>
+
+        <div class="sm:col-span-2">
+          <label for="first-name" class="block text-sm/6 font-medium"
+            >Fecha Ingreso</label
+          >
+          <div class="mt-2">
+            <calendar-datepicker
+              [dateInput]="objInput().guideDate"
+              (guideDateEvent)="onGuideDateChange($event)"
+            />
+          </div>
+          <form-error-label [control]="form.get('guideDate')!" />
+        </div>
+
+        <div class="sm:col-span-2">
+          <label for="first-name" class="block text-sm/6 font-medium"
+            >N° Ingreso</label
+          >
+          <div class="mt-2">
+            <input
+              readonly
+              id="id"
+              type="text"
+              name="id"
+              placeholder="N° Ingreso"
+              [class.border-red-500]="form.get('id')?.errors ?? false"
+              class="input input-bordered w-full"
+              formControlName="id"
+              (change)="onInputChange($event)"
+            />
+          </div>
+          <form-error-label [control]="form.get('id')!" />
+        </div>
+
+        <div class="sm:col-span-2">
+          <label for="first-name" class="block text-sm/6 font-medium"
+            >Folio</label
+          >
+          <div class="mt-2">
+            <input
+              id="folio"
+              type="text"
+              name="folio"
+              placeholder="Folio"
+              [class.border-red-500]="form.get('folio')?.errors ?? false"
+              class="input input-bordered w-full"
+              formControlName="folio"
+              (change)="onInputChange($event)"
+            />
+          </div>
+          <form-error-label [control]="form.get('folio')!" />
+        </div>
+
+        <div class="sm:col-span-2">
+          <label for="first-name" class="block text-sm/6 font-medium"
+            >Rut Proveedor</label
+          >
+          <div class="mt-2">
+            <input
+              list="providers-list"
+              id="ice-cream-choice"
+              name="ice-cream-choice"
+              type="text"
+              placeholder="Proveedor"
+              class="input input-bordered w-full"
+              formControlName="providerRut"
+              [class.border-red-500]="form.get('providerRut')?.errors ?? false"
+              (change)="onSelectionProviderChange($event)"
+            />
+          </div>
+          <datalist
+            id="providers-list"
+            class="datalist datalist-bodered w-full max-h-[100px] overflow-y-auto"
+          >
+            <option disabled selected>Seleccionar un proveedor</option>
+            @for (item of providersResource.value()?.data; track item.id) {
+            <option [value]="item.personRut" [tabIndex]="item.id"></option>
+            }
+          </datalist>
+        </div>
+
+        <div class="sm:col-span-2">
+          <label for="first-name" class="block text-sm/6 font-medium"
+            >Moneda de Ingreso</label
+          >
+          <div class="mt-2">
+            <select
+              class="select select-bordered w-full"
+              (change)="onSelectedCurrentTypeChange($event)"
+            >
+              <option disabled>Seleccionar moneda</option>
+              @for (item of currentType(); track item.id) {
+              @if(currentTypeDescriptionSelected() === item.description ){
+              <option selected [value]="item.id">{{item.description}}</option>
+              }@else {
+              <option [value]="item.id">{{item.description}}</option>
+              } }
+            </select>
+          </div>
+          <form-error-label [control]="form.get('currencyType')!" />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Abajo full anchura - Itemizados-->
+  <div class="flex flex-col gap-2 border-t border-gray-300 pr-4">
+    <div class="border-b border-gray-900/10 pb-12">
+      <div class="mt-14 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+        <div class="sm:col-span-6">
+          <details class="collapse collapse-arrow bg-base-200">
+            <summary class="collapse-title text-xl font-medium">
+              Itemizado de Mercaderia
+            </summary>
+            <div class="collapse-content">
+              <itemized-material-table
+                [itemizedMaterialsInput]="objInput().materials"
+                (itemizedMaterialsEvent)="onItemizedMaterialChange($event)"
+              />
+            </div>
+          </details>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-2 gap-2 border-t border-b border-gray-300 pr-4">
+    <!-- Left Side -->
+    <div class="flex flex-col gap-2 border-r border-gray-300 pr-4">
+      <div class="border-b border-gray-900/10 pb-12">
+        <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+          <div class="sm:col-span-6">
+            <label for="first-name" class="block text-sm/6 font-medium"
+              >Observaciones</label
+            >
+            <div class="mt-2">
+              <textarea
+                id="observations"
+                type="text"
+                name="observations"
+                placeholder="Observaciones"
+                class="textarea textarea-bordered textarea-lg w-full max-w-xs"
+                formControlName="observations"
+                (change)="onInputChange($event)"
+              ></textarea>
+              <!-- <input
+                id="observations"
+                type="text"
+                name="observations"
+                placeholder="Observaciones"
+                [class.border-red-500]="form.get('observations')?.errors ?? false"
+                class="input input-bordered w-full"
+                formControlName="observations"
+                (change)="onInputChange($event)"
+              /> -->
+            </div>
+            <form-error-label [control]="form.get('observations')!" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Side -->
+    <div class="flex flex-col gap-2">
+      <div class="border-b border-gray-900/10 pb-12">
+        <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+          <div class="sm:col-span-6">
+            <label for="first-name" class="block text-sm/6 font-medium"
+              >Neto</label
+            >
+            <div class="mt-2">
+              <input
+                readonly
+                id="neto"
+                type="text"
+                name="neto"
+                placeholder="Neto"
+                [class.border-red-500]="form.get('neto')?.errors ?? false"
+                class="input input-bordered w-full"
+                formControlName="neto"
+                (change)="onInputChange($event)"
+              />
+            </div>
+            <form-error-label [control]="form.get('neto')!" />
+          </div>
+          <div class="sm:col-span-6">
+            <label for="first-name" class="block text-sm/6 font-medium"
+              >Iva</label
+            >
+            <div class="mt-2">
+              <input
+                readonly
+                id="taxRate"
+                type="text"
+                name="taxRate"
+                placeholder="Iva"
+                [class.border-red-500]="form.get('taxRate')?.errors ?? false"
+                class="input input-bordered w-full"
+                formControlName="taxRate"
+                (change)="onInputChange($event)"
+              />
+            </div>
+            <form-error-label [control]="form.get('taxRate')!" />
+          </div>
+          <div class="sm:col-span-6">
+            <label for="first-name" class="block text-sm/6 font-medium"
+              >Total</label
+            >
+            <div class="mt-2">
+              <input
+                readonly
+                id="totalValue"
+                type="text"
+                name="totalValue"
+                placeholder="Total Value"
+                [class.border-red-500]="form.get('totalValue')?.errors ?? false"
+                class="input input-bordered w-full"
+                formControlName="totalValue"
+                (change)="onInputChange($event)"
+              />
+            </div>
+            <form-error-label [control]="form.get('totalValue')!" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
+
+@if (wasSaved()) {
+<div class="alert alert-success fixed bottom-4 right-4 w-80 animate-fadeIn">
+  <span>Datos actualizados correctamente</span>
+</div>
+}

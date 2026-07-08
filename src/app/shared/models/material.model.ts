@@ -12,7 +12,9 @@ export interface MaterialGuideGeneric {
   currencyType: number;
   valueCurrency: null;
   customer: Customer;
+  customerId: number;
   provider: Provider;
+  providerId: number;
   neto: number;
   taxRate: number;
   totalValue: number;
@@ -30,7 +32,7 @@ export interface MaterialGuideGeneric {
 export interface Material {
   productCode: string;
   description: string;
-  unitMeasurement: number;
+  unitMeasurement: string;
   quantity: number;
   unitValue: number;
   totalValue: number;

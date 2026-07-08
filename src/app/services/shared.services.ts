@@ -25,7 +25,7 @@ export class SharedService {
   ): Observable<BaseResponseGeneric<Shared<string>[]>> {
     const { limit = 0, offset = 0, searchText } = options;
     const key = `${limit}-${offset}-${searchText}`; // 10-0-'<nameService>'
-    console.log('getShareds-key-cache', key);
+    // console.log('getShareds-key-cache', key);
     if (this.sharedsCache.has(key)) {
       return of(this.sharedsCache.get(key)!);
     }
@@ -35,7 +35,7 @@ export class SharedService {
         BaseResponseGeneric<Shared<string>[]>
       >(`${baseUrl}/${controllerName}`)
       .pipe(
-        tap((resp) => console.log('service.getShareds', resp)),
+        // tap((resp) => console.log('service.getShareds', resp)),
         tap((resp) => this.sharedsCache.set(key, resp)),
       );
   }

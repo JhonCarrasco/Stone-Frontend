@@ -9,7 +9,7 @@
           </label>
         </th>
         <th>Folio</th>
-        <th>Tipo</th>
+        <th>Tipo Documento</th>
         <th>Fecha</th>
         <th>Cliente</th>
         <th>Proveedor</th>
@@ -34,11 +34,10 @@
           </label>
         </th>
         <td>{{ item.folio }}</td>
-        <td>{{ item.documentType }}</td>
+        <td>{{ onDocumentTypeDescription(item.documentType) }}</td>
         <td>{{ item.guideDate }}</td>
         <td>{{ item.customer.displayName }}</td>
         <td>{{ item.provider.personName }}</td>
-        <!-- <td>{{ onStateDescription(item.state) }}</td> -->
         <th>
           <a
             [routerLink]="['/admin/materials/reception', item.id]"

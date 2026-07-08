@@ -165,14 +165,12 @@ export class BudgetDetails implements OnInit {
   }
 
   computedTosubTotal() {
-    const subTotalProducts = this.budget().itemizedProducts.reduce(
-      (sum, product) => sum + product.totalValue,
-      0,
-    );
-    const subTotalServices = this.budget().itemizedServices.reduce(
-      (sum, service) => sum + service.totalValue,
-      0,
-    );
+    const subTotalProducts = this.budget()
+      .itemizedProducts.filter((item) => item.active)
+      .reduce((sum, product) => sum + product.totalValue, 0);
+    const subTotalServices = this.budget()
+      .itemizedServices.filter((item) => item.active)
+      .reduce((sum, service) => sum + service.totalValue, 0);
     return subTotalProducts + subTotalServices;
   }
 

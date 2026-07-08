@@ -1,0 +1,15 @@
+<mat-form-field>
+  <!-- <mat-label>Custom calendar header</mat-label> -->
+  <input
+    matInput
+    id="guideDate"
+    name="guideDate"
+    formControlName="guideDate"
+    [matDatepicker]="picker"
+    [value]="this.dateInput()"
+    (dateChange)="onDateChange($event.value)"
+  />
+  <!-- <mat-hint>MM/DD/YYYY</mat-hint> -->
+  <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+  <mat-datepicker #picker [calendarHeaderComponent]="Header"></mat-datepicker>
+</mat-form-field>

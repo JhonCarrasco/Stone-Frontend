@@ -89,7 +89,7 @@ export class ProductsService {
       .get<BaseResponseGeneric<Product>>(`${baseUrl}/products/${id}`)
       .pipe(
         tap((product) => this.productCache.set(id, product)),
-        tap((product) => console.log('service.getProductById', product)),
+        // tap((product) => console.log('service.getProductById', product)),
       );
   }
 
@@ -117,9 +117,9 @@ export class ProductsService {
       .put<BaseResponseGeneric<Product>>(`${baseUrl}/products/${id}`, product)
       .pipe(
         tap((response) => this.updateProductCache(id, product)),
-        tap((response) =>
-          console.log('service.updateProduct', response, product),
-        ),
+        // tap((response) =>
+        //   console.log('service.updateProduct', response, product),
+        // ),
       );
   }
 
@@ -133,9 +133,9 @@ export class ProductsService {
         tap((response) =>
           this.updateProductCache(response.data.toString(), product),
         ),
-        tap((response) =>
-          console.log('service.createProduct', response, product),
-        ),
+        // tap((response) =>
+        //   console.log('service.createProduct', response, product),
+        // ),
       );
   }
 

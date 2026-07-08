@@ -1,0 +1,230 @@
+<div class="overflow-x-auto bg-gray-900 rounded-2xl p-4">
+  <table class="table">
+    <!-- head -->
+    <thead>
+      <tr>
+        <th>
+          <label>
+            <input type="checkbox" class="checkbox" />
+          </label>
+        </th>
+        <th>Código</th>
+        <th>Descripción</th>
+        <th>Unidad de Medida</th>
+        <th>Cantidad</th>
+        <th>Valor Unitario</th>
+        <th>Total</th>
+        <th>
+          <button
+            class="btn btn-primary"
+            type="button"
+            onclick="itemized_material_modal.showModal()"
+          >
+            Nuevo Item
+          </button>
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      @if(itemizedMaterialsInput() == null || itemizedMaterialsInput().length ==
+      0) {
+      <tr>
+        <td colspan="10">
+          <div class="alert alert-info">
+            <span>No hay productos itemizados</span>
+          </div>
+        </td>
+      </tr>
+      }@else { @for (item of itemizedMaterialsInput(); track item.id) {
+      @if(item.active){
+      <tr>
+        <th>
+          <label>
+            <input type="checkbox" class="checkbox" />
+          </label>
+        </th>
+        <td>{{ item.productCode }}</td>
+        <td>{{ item.description }}</td>
+        <td>{{ item.unitMeasurement }}</td>
+        <td>{{ item.quantity }}</td>
+        <td>{{ item.unitValue }}</td>
+        <td>{{ item.totalValue }}</td>
+        <th>
+          <a
+            class="btn btn-ghost text-accent btn-md"
+            (click)="onRemoveItemizedMaterial(item)"
+            ><div>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke-width="0.8"
+                stroke="currentColor"
+                class="w-6 h-6 text-white"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M9,3V4H4V6H5V19A2,2 0 0,0 7,21H17A2,2 0 0,0 19,19V6H20V4H15V3H9M7,6H17V19H7V6M9,8V17H11V8H9M13,8V17H15V8H13Z"
+                />
+              </svg></div
+          ></a>
+          <a
+            class="btn btn-ghost text-accent btn-md"
+            onclick="itemized_material_modal.showModal()"
+            (click)="onEditItemizedMaterial(item)"
+            ><div>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke-width="0.8"
+                stroke="currentColor"
+                class="w-6 h-6 text-white"
+              >
+                <path
+                  xmlns="http://www.w3.org/2000/svg"
+                  d="M20.71,7.04C21.1,6.65 21.1,6 20.71,5.63L18.37,3.29C18,2.9 17.35,2.9 16.96,3.29L15.12,5.12L18.87,8.87M3,17.25V21H6.75L17.81,9.93L14.06,6.18L3,17.25Z"
+                />
+              </svg></div
+          ></a>
+        </th>
+      </tr>
+      } } }
+    </tbody>
+  </table>
+</div>
+<dialog id="itemized_material_modal" class="modal">
+  <div class="p-4 overflow-y-auto flex-grow">
+    <div class="modal-box w-12/13 max-w-5xl h-auto max-h-[90vh]">
+      <div class="flex flex-col gap-2">
+        <form [formGroup]="itemizedMaterialForm">
+          <div class="border-b border-gray-900/10 pb-12">
+            <h2 class="text-lg font-bold">Nuevo Item Material</h2>
+            <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+              <div class="sm:col-span-6">
+                <label for="first-name" class="block text-sm/6 font-medium"
+                  >Código</label
+                >
+                <div class="mt-2">
+                  <input
+                    id="productCode"
+                    type="text"
+                    name="productCode"
+                    placeholder="productCode"
+                    class="input input-bordered w-full"
+                    formControlName="productCode"
+                    (change)="onInputTextChange($event)"
+                  />
+                </div>
+              </div>
+
+              <div class="sm:col-span-6">
+                <label for="first-name" class="block text-sm/6 font-medium"
+                  >Descripción</label
+                >
+                <div class="mt-2">
+                  <input
+                    id="description"
+                    type="text"
+                    name="description"
+                    placeholder="Descripción"
+                    class="input input-bordered w-full"
+                    formControlName="description"
+                    (change)="onInputTextChange($event)"
+                  />
+                </div>
+              </div>
+
+              <div class="sm:col-span-2">
+                <label for="first-name" class="block text-sm/6 font-medium"
+                  >Unidad de Medida</label
+                >
+                <div class="mt-2">
+                  <input
+                    id="unitMeasurement"
+                    type="text"
+                    name="unitMeasurement"
+                    placeholder="Unidad de Medida"
+                    class="input input-bordered w-full"
+                    formControlName="unitMeasurement"
+                    (change)="onInputTextChange($event)"
+                  />
+                </div>
+              </div>
+
+              <div class="sm:col-span-2">
+                <label for="first-name" class="block text-sm/6 font-medium"
+                  >Cantidad</label
+                >
+                <div class="mt-2">
+                  <input
+                    id="quantity"
+                    type="text"
+                    name="quantity"
+                    placeholder="Cantidad"
+                    class="input input-bordered w-full"
+                    formControlName="quantity"
+                    (change)="onInputNumberChange($event)"
+                  />
+                </div>
+              </div>
+
+              <div class="sm:col-span-2">
+                <label for="first-name" class="block text-sm/6 font-medium"
+                  >Valor Unitario</label
+                >
+                <div class="mt-2">
+                  <input
+                    id="unitValue"
+                    type="text"
+                    name="unitValue"
+                    placeholder="Valor Unitario"
+                    class="input input-bordered w-full"
+                    formControlName="unitValue"
+                    (change)="onInputNumberChange($event)"
+                  />
+                </div>
+              </div>
+
+              <div class="sm:col-span-2">
+                <label for="first-name" class="block text-sm/6 font-medium"
+                  >Total</label
+                >
+                <div class="mt-2">
+                  <input
+                    readonly
+                    id="totalValue"
+                    type="text"
+                    name="totalValue"
+                    placeholder="Total"
+                    class="input input-bordered w-full"
+                    formControlName="totalValue"
+                    [value]="total()"
+                  />
+                  <!-- [value]="itemizedProductForm.get('totalValue')?.value" -->
+                </div>
+              </div>
+            </div>
+          </div>
+          <button
+            class="btn btn-primary"
+            type="button"
+            (click)="onAddItemizedMaterial()"
+          >
+            Agregar
+          </button>
+        </form>
+      </div>
+      <div class="modal-action">
+        <form method="dialog">
+          <button class="btn btn-default">Close</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+<!-- <div class="sm:col-span-6">
+              <search-product (productEvent)="onProductSelected($event)" />
+            </div> -->

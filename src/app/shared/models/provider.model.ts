@@ -4,6 +4,7 @@ export interface Provider {
   createAt?: null;
   updatedAt?: null;
   personName?: string;
+  personRut?: string;
   personId?: number;
   locationId?: number;
   bankAccountId?: number;

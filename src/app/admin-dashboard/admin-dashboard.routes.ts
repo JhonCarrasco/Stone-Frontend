@@ -8,6 +8,7 @@ import { BudgetMainPage } from './pages/budget/budget-main-page/budget-main-page
 import { MaterialsReceptionPage } from './pages/material/materials-reception-page/materials-reception-page';
 import { MaterialsDispatchPage } from './pages/material/materials-dispatch-page/materials-dispatch-page';
 import { MaterialsVoucherPage } from './pages/material/materials-voucher-page/materials-voucher-page';
+import { MaterialReceptionPage } from './pages/material/material-reception-page/material-reception-page';
 
 export const adminDashboardRoutes: Routes = [
   {
@@ -17,7 +18,7 @@ export const adminDashboardRoutes: Routes = [
     children: [
       {
         path: '',
-        component: ProductsAdminPageComponent,
+        component: MaterialsReceptionPage,
       },
       {
         path: 'products',
@@ -38,10 +39,11 @@ export const adminDashboardRoutes: Routes = [
       {
         path: 'materials/reception',
         component: MaterialsReceptionPage,
+        data: {},
       },
       {
         path: 'materials/reception/:id',
-        component: ProductsAdminPageComponent, //TODO: create material reception page
+        component: MaterialReceptionPage, //TODO: create material reception page
       },
       {
         path: 'materials/dispatch',
