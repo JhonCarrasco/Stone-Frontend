@@ -1,20 +1,23 @@
+import { ɵNullViewportScroller } from '@angular/common';
 import { Customer } from './customer.model';
 import { Provider } from './provider.model';
 
 export interface MaterialGuideGeneric {
   id: number;
   active: null;
-  createAt: null;
+  createAt: Date;
   updatedAt?: null;
   folio: string;
   documentType: number;
   observations: string;
   currencyType: number;
-  valueCurrency: null;
+  valueCurrency: number;
   customer: Customer;
-  customerId: number;
+  customerId: null;
   provider: Provider;
   providerId: number;
+  providerRut: null;
+  providerName: null;
   neto: number;
   taxRate: number;
   totalValue: number;
@@ -24,9 +27,10 @@ export interface MaterialGuideGeneric {
   projectTo: null;
   budgetId: null;
   file: null;
-  locationId: null;
   address: null;
   zone: null;
+  commune: null;
+  netoConversion: null;
 }
 
 export interface Material {

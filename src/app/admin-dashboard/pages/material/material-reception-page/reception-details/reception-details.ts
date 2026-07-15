@@ -9,7 +9,7 @@ import { Material, MaterialGuideGeneric } from '@shared/models/material.model';
 import { Provider } from '@shared/models/provider.model';
 import { firstValueFrom } from 'rxjs';
 import {
-  currencyType,
+  currencyTypeData,
   getCurrencyTypeDescription,
 } from 'src/app/constant/currencyTypeData';
 import {
@@ -21,7 +21,7 @@ import { MaterialService } from 'src/app/services/materialService';
 import { ProviderService } from 'src/app/services/providerService';
 import { environment } from 'src/environments/environment';
 
-const taxRate = environment.taxRate;
+const _taxRate = environment.taxRate;
 
 @Component({
   selector: 'reception-details',
@@ -40,7 +40,7 @@ export class ReceptionDetails implements OnInit {
   materialService = inject(MaterialService);
   providersService = inject(ProviderService);
   wasSaved = signal(false);
-  currentType = signal(currencyType);
+  currentTypeData = signal(currencyTypeData);
   documentType = signal(documentType.filter((t) => t.type === 1)); // filtrar solo los tipos de documento de recepción (type === 1)
   currentTypeDescriptionSelected = signal('');
   documentTypeDescriptionSelected = signal('');
@@ -54,10 +54,12 @@ export class ReceptionDetails implements OnInit {
     documentType: [0],
     observations: [''],
     currencyType: [0],
-    valueCurrency: [null as number | null],
+    valueCurrency: [0],
     customer: [null as Customer | null],
+    customerId: [null],
     provider: [null as Provider | null],
     providerRut: [null as string | null],
+    providerName: [null as string | null],
     neto: [0],
     taxRate: [0],
     totalValue: [0],
@@ -67,9 +69,13 @@ export class ReceptionDetails implements OnInit {
     projectTo: [null as any],
     budgetId: [null as number | null],
     file: [null as any],
-    locationId: [null as number | null],
     address: [null as string | null],
     zone: [null as string | null],
+    commune: [null as string | null],
+    netoConversion: [0],
+    taxAmount: [0],
+    taxConversion: [0],
+    totalConversion: [0],
   });
 
   onSelectedDocumentTypeChange(event: Event) {
@@ -90,9 +96,13 @@ export class ReceptionDetails implements OnInit {
   }
 
   onSelectedCurrentTypeChange(event: Event) {
-    const value = (event.target as HTMLSelectElement).value;
+    const { name, value } = event.target as HTMLSelectElement;
     this.form.patchValue({
       currencyType: Number(value) ?? null,
+      valueCurrency: null, // reset each new selected item
+      netoConversion: null,
+      taxConversion: null,
+      totalConversion: null,
     });
     this.currentTypeDescriptionSelected.set(
       getCurrencyTypeDescription(Number(value) ?? null),
@@ -107,10 +117,10 @@ export class ReceptionDetails implements OnInit {
     this.form.patchValue({
       provider: !selectedOption ? null : selectedOption,
       providerRut: !selectedOption ? null : selectedOption.personRut,
+      providerName: !selectedOption ? null : selectedOption.personName,
     });
   }
   onItemizedMaterialChange(event: Material[]) {
-    // console.log('MaterialDetails.onItemizedMaterialsChange', event);
     // actualizar materials en form
     this.form.patchValue({
       materials: event,
@@ -126,12 +136,20 @@ export class ReceptionDetails implements OnInit {
     this.form.patchValue({
       neto: totalItems,
       totalValue:
-        totalItems * ((100 + (this.form.value?.taxRate ?? taxRate)) / 100),
+        totalItems * ((100 + (this.form.value?.taxRate ?? _taxRate)) / 100),
     });
   }
 
   onInputChange(event: Event) {
     const { value, name } = event.target as HTMLSelectElement;
+
+    if (name === 'valueCurrency') {
+      const valueCurrency = Number(value);
+      if (valueCurrency > 0) {
+        this.CalculateTotals();
+      }
+      return;
+    }
     this.form.patchValue({ [name]: value });
   }
 
@@ -152,24 +170,53 @@ export class ReceptionDetails implements OnInit {
 
   setFormValue(formLike: Partial<MaterialGuideGeneric>) {
     this.form.reset(this.objInput() as MaterialGuideGeneric);
-    this.form.patchValue({
-      providerRut: this.objInput().provider?.personRut ?? '',
-      guideDate: this.objInput().guideDate ?? new Date(),
-      taxRate:
-        this.objInput().taxRate > 0 ? this.objInput().taxRate * 100 : taxRate,
-    });
+    const { provider, guideDate, taxRate } = this.objInput();
+
+    formLike = {
+      ...formLike,
+      providerRut: provider?.personRut ?? null,
+      providerName: provider?.personName ?? null,
+      guideDate: guideDate ?? new Date(),
+      taxRate: taxRate ? taxRate * 100 : _taxRate, // valor entero para vista
+    } as Partial<MaterialGuideGeneric>;
+
     this.form.patchValue(formLike as any);
   }
 
   CalculateTotals() {
+    console.log('CalculateTotals.objInput', this.objInput());
+    console.log('CalculateTotals.form', this.form.value);
+    const {
+      totalValue,
+      taxRate,
+      neto,
+      // valueCurrency: valueCurrencyInput,
+    } = this.objInput();
+    const { valueCurrency: valueCurrencyForm, currencyType } = this.form.value;
+
+    const isValueCurrency = valueCurrencyForm && Number(currencyType) > 1;
+
+    // console.log('valueCurrencyInput', valueCurrencyInput);
+    // console.log('valueCurrencyForm', valueCurrencyForm);
+    // console.log('isValueCurrency', isValueCurrency);
+    // console.log('currencyType', currencyType);
+
     this.form.patchValue({
-      neto: this.objInput().neto ?? 0,
-      totalValue: this.objInput().totalValue ?? 0,
+      neto: neto ?? 0,
+      totalValue: totalValue ?? 0,
+      taxAmount: neto * taxRate,
+      netoConversion: isValueCurrency ? neto / Number(valueCurrencyForm) : null,
+      taxConversion: isValueCurrency
+        ? (neto * taxRate) / Number(valueCurrencyForm)
+        : null,
+      totalConversion: isValueCurrency
+        ? (neto * (taxRate + 1)) / Number(valueCurrencyForm)
+        : null,
     });
   }
 
   ngOnInit(): void {
-    // console.log('ReceptionDetails.ngOnInit.objInput', this.objInput());
+    // console.log('ReceptionDetails.ngOnInit', this.objInput());
     this.setFormValue(this.objInput());
     this.documentTypeDescriptionSelected.set(
       getDocumentTypeDescription(this.objInput().documentType ?? null),
@@ -177,7 +224,6 @@ export class ReceptionDetails implements OnInit {
     this.currentTypeDescriptionSelected.set(
       getCurrencyTypeDescription(this.objInput().currencyType ?? null),
     );
-
     this.CalculateTotals();
   }
 
@@ -190,12 +236,11 @@ export class ReceptionDetails implements OnInit {
 
     const objLike: Partial<MaterialGuideGeneric> = {
       ...(formValue as MaterialGuideGeneric),
-      customerId: formValue.customer?.id ?? 0,
       providerId: formValue.provider?.id ?? 0,
     };
 
-    console.log('ReceptionDetails.onSubmit.objInput', this.objInput());
-    console.log('ReceptionDetails.onSubmit.formValue', formValue);
+    // console.log('ReceptionDetails.onSubmit.objInput', this.objInput());
+    // console.log('ReceptionDetails.onSubmit.formValue', formValue);
     console.log('ReceptionDetails.onSubmit.objLike', objLike);
 
     if (this.objInput().id == 0) {

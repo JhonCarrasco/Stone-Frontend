@@ -12,8 +12,11 @@
         <th>Descripción</th>
         <th>Unidad de Medida</th>
         <th>Cantidad</th>
+        @if(!isVoucher()){
         <th>Valor Unitario</th>
         <th>Total</th>
+        }
+
         <th>
           <button
             class="btn btn-primary"
@@ -47,8 +50,11 @@
         <td>{{ item.description }}</td>
         <td>{{ item.unitMeasurement }}</td>
         <td>{{ item.quantity }}</td>
+        @if(!isVoucher()){
         <td>{{ item.unitValue }}</td>
         <td>{{ item.totalValue }}</td>
+        }
+
         <th>
           <a
             class="btn btn-ghost text-accent btn-md"
@@ -170,6 +176,7 @@
                 </div>
               </div>
 
+              @if(!this.isVoucher()){
               <div class="sm:col-span-2">
                 <label for="first-name" class="block text-sm/6 font-medium"
                   >Valor Unitario</label
@@ -198,19 +205,21 @@
                     type="text"
                     name="totalValue"
                     placeholder="Total"
-                    class="input input-bordered w-full"
+                    class="input input-bordered w-full bg-neutral"
                     formControlName="totalValue"
                     [value]="total()"
                   />
                   <!-- [value]="itemizedProductForm.get('totalValue')?.value" -->
                 </div>
               </div>
+              }
             </div>
           </div>
           <button
             class="btn btn-primary"
             type="button"
             (click)="onAddItemizedMaterial()"
+            onclick="itemized_material_modal.close()"
           >
             Agregar
           </button>

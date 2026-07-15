@@ -39,7 +39,7 @@
         <td>{{ item.projectName }}</td>
         <td>{{ item.description }}</td>
         <td>{{ onStateDescription(item.state) }}</td>
-        <td>{{ item.createAt}}</td>
+        <td>{{ item.createAt | date: 'dd/MM/yyyy'}}</td>
         <th>
           <a
             [routerLink]="['/admin/budgets', item.id]"

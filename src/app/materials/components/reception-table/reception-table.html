@@ -10,8 +10,9 @@
         </th>
         <th>Folio</th>
         <th>Tipo Documento</th>
-        <th>Fecha</th>
-        <th>Cliente</th>
+        <th>Valor Total</th>
+        <th>Fecha Creación</th>
+        <th>Rut Proveedor</th>
         <th>Proveedor</th>
         <th></th>
       </tr>
@@ -35,8 +36,9 @@
         </th>
         <td>{{ item.folio }}</td>
         <td>{{ onDocumentTypeDescription(item.documentType) }}</td>
-        <td>{{ item.guideDate }}</td>
-        <td>{{ item.customer.displayName }}</td>
+        <td>{{ item.totalValue | currency }}</td>
+        <td>{{ item.guideDate | date: 'dd/MM/yyyy' }}</td>
+        <td>{{ item.provider.personRut }}</td>
         <td>{{ item.provider.personName }}</td>
         <th>
           <a

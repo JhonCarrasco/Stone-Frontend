@@ -33,16 +33,16 @@ export interface BaseEntityResponse {
   updatedAt: null;
 }
 
-export interface Provider {
-  id: number;
-  active: boolean;
-  createAt: Date;
-  updatedAt: null;
-  personId: number;
-  locationId: number;
-  bankAccountId: number;
-  contacts: Contact[];
-}
+// export interface Provider {
+//   id: number;
+//   active: boolean;
+//   createAt: Date;
+//   updatedAt: null;
+//   personId: number;
+//   locationId: number;
+//   bankAccountId: number;
+//   contacts: Contact[];
+// }
 
 export interface Contact {
   contactId: number;

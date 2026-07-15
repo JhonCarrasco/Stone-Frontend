@@ -9,6 +9,8 @@ import { MaterialsReceptionPage } from './pages/material/materials-reception-pag
 import { MaterialsDispatchPage } from './pages/material/materials-dispatch-page/materials-dispatch-page';
 import { MaterialsVoucherPage } from './pages/material/materials-voucher-page/materials-voucher-page';
 import { MaterialReceptionPage } from './pages/material/material-reception-page/material-reception-page';
+import { MaterialDispatchPage } from './pages/material/material-dispatch-page/material-dispatch-page';
+import { MaterialVoucherPage } from './pages/material/material-voucher-page/material-voucher-page';
 
 export const adminDashboardRoutes: Routes = [
   {
@@ -18,7 +20,7 @@ export const adminDashboardRoutes: Routes = [
     children: [
       {
         path: '',
-        component: MaterialsReceptionPage,
+        component: MaterialsVoucherPage,
       },
       {
         path: 'products',
@@ -51,7 +53,7 @@ export const adminDashboardRoutes: Routes = [
       },
       {
         path: 'materials/dispatch/:id',
-        component: ProductsAdminPageComponent, //TODO: create material dispatch page
+        component: MaterialDispatchPage, //TODO: create material dispatch page
       },
       {
         path: 'materials/voucher',
@@ -59,7 +61,7 @@ export const adminDashboardRoutes: Routes = [
       },
       {
         path: 'materials/voucher/:id',
-        component: ProductsAdminPageComponent, //TODO: create material voucher page
+        component: MaterialVoucherPage, //TODO: create material voucher page
       },
       {
         path: '**',

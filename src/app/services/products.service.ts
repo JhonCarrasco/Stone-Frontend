@@ -6,11 +6,7 @@ import {
   BaseResponseGeneric,
   Options,
 } from '@shared/models/baseResponseGeneric.model';
-import {
-  BaseEntityResponse,
-  Product,
-  Provider,
-} from '@shared/models/product.model';
+import { BaseEntityResponse, Product } from '@shared/models/product.model';
 import {
   delay,
   firstValueFrom,
