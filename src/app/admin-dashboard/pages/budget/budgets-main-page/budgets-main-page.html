@@ -23,7 +23,11 @@
   </select>
 
   <div class="flex-1">
-    <search-budget (budgetEvent)="onSearchBudgetChange($event)" />
+    <search-budget
+      (budgetEvent)="onSearchBudgetChange($event)"
+      [withDatalist]="false"
+      [budgetsFound]="[]"
+    />
   </div>
 
   <button class="btn btn-primary" routerLink="/admin/budgets/new">

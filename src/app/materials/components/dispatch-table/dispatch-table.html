@@ -10,8 +10,9 @@
         </th>
         <th>Folio</th>
         <th>Tipo</th>
-        <th>Fecha</th>
-        <th>Cliente</th>
+        <th>Valor Total</th>
+        <th>Fecha Creación</th>
+        <th>Rut Proveedor</th>
         <th>Proveedor</th>
         <th></th>
       </tr>
@@ -34,14 +35,15 @@
           </label>
         </th>
         <td>{{ item.folio }}</td>
-        <td>{{ item.documentType }}</td>
-        <td>{{ item.guideDate }}</td>
-        <td>{{ item.customer.displayName }}</td>
+        <td>{{ onDocumentTypeDescription(item.documentType) }}</td>
+        <td>{{ item.totalValue | currency }}</td>
+        <td>{{ item.guideDate | date: 'dd/MM/yyyy' }}</td>
+        <td>{{ item.provider.personRut }}</td>
         <td>{{ item.provider.personName }}</td>
         <!-- <td>{{ onStateDescription(item.state) }}</td> -->
         <th>
           <a
-            [routerLink]="['/admin/materials/reception', item.id]"
+            [routerLink]="['/admin/materials/dispatch', item.id]"
             class="btn btn-ghost text-accent btn-xs"
             >Detalles</a
           >

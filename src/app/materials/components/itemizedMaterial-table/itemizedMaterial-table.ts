@@ -24,6 +24,7 @@ export class ItemizedMaterialTable implements OnInit {
   router = inject(Router);
   fb = inject(FormBuilder);
   total = computed(() => this.itemizedMaterialForm.value.totalValue ?? 0);
+  isVoucher = input.required<boolean>();
 
   itemizedMaterialForm = this.fb.group({
     id: [0],

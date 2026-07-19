@@ -1,1 +1,207 @@
-<p>voucher-details works!</p>,
+<h1 class="text-2xl font-bold">
+  Cupón de Consumo {{ objInput().id ? objInput().id : 'Nuevo' }}
+</h1>
+<div class="divider col-span-2"></div>
+
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <div class="grid grid-cols-2 gap-2">
+    <!--GUARDAR-->
+    <div class="col-span-2">
+      <div class="flex justify-end h-12">
+        <button class="btn btn-secondary" type="submit">
+          <!-- <span class="loading loading-spinner loading-sm"></span> -->
+          Guardar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Top full width - titulo - Informacion ingreso de mercaderia-->
+  <div class="flex flex-col gap-2 border-t border-gray-300 pr-4">
+    <div class="border-b border-gray-900/10">
+      <h2 class="text-lg font-bold">Ingreso de Mercaderia</h2>
+    </div>
+  </div>
+
+  <!-- full informacion -->
+  <div class="grid grid-cols-2 gap-2 border-t border-b border-gray-300 pr-4">
+    <!-- Left Side -->
+    <div class="flex flex-col gap-2 border-r border-gray-300 pr-4">
+      <div class="border-b border-gray-900/10 pb-12">
+        <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+          <div class="sm:col-span-2">
+            <label for="first-name" class="block text-sm/6 font-medium"
+              >N° Ingreso</label
+            >
+            <div class="mt-3">
+              <input
+                readonly
+                id="id"
+                type="text"
+                name="id"
+                placeholder="N° Ingreso"
+                [class.border-red-500]="form.get('id')?.errors ?? false"
+                class="input input-bordered w-full bg-neutral"
+                formControlName="id"
+                (change)="onInputChange($event)"
+              />
+            </div>
+            <form-error-label [control]="form.get('id')!" />
+          </div>
+
+          <div class="sm:col-span-3">
+            <label for="first-name" class="block text-sm/6 font-medium"
+              >Fecha Ingreso</label
+            >
+            <div class="mt-2">
+              <calendar-datepicker
+                [dateInput]="objInput().createAt!"
+                (guideDateEvent)="onGuideDateChange($event)"
+              />
+            </div>
+            <form-error-label [control]="form.get('guideDate')!" />
+          </div>
+
+          <div class="sm:col-span-3">
+            <label for="first-name" class="block text-sm/6 font-medium"
+              >Entregado a</label
+            >
+            <div class="mt-2">
+              <input
+                id="supplierTo"
+                type="text"
+                name="supplierTo"
+                placeholder=""
+                [class.border-red-500]="form.get('supplierTo')?.errors ?? false"
+                class="input input-bordered w-full"
+                formControlName="supplierTo"
+                (change)="onInputChange($event)"
+              />
+            </div>
+            <form-error-label [control]="form.get('supplierTo')!" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Side -->
+    <div class="flex flex-col gap-2">
+      <div class="border-b border-gray-900/10 pb-12">
+        <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+          <div class="sm:col-span-6">
+            <search-budget
+              (budgetEvent)="onSearchBudgetChange($event)"
+              [withDatalist]="true"
+              [budgetsFound]="budgetsResource.value()?.data ?? []"
+            />
+          </div>
+
+          <div class="sm:col-span-4 ml-4">
+            <label for="first-name" class="block text-sm/6 font-medium"
+              >Proyecto/Presupuesto</label
+            >
+            <div class="mt-2">
+              <input
+                id="projectTo"
+                type="text"
+                name="projectTo"
+                placeholder=""
+                [class.border-red-500]="form.get('projectTo')?.errors ?? false"
+                class="input input-bordered w-full"
+                formControlName="projectTo"
+                (change)="onInputChange($event)"
+              />
+            </div>
+            <form-error-label [control]="form.get('projectTo')!" />
+          </div>
+          @if(this.form.get('budgetId')?.value != null){
+          <div class="sm:col-span-2">
+            <label for="first-name" class="block text-sm/6 font-medium"
+              >N°</label
+            >
+            <div class="mt-2">
+              <input
+                readonly
+                id="budgetId"
+                type="number"
+                name="budgetId"
+                placeholder="N° Presupuesto"
+                [class.border-red-500]="form.get('budgetId')?.errors ?? false"
+                class="input input-bordered w-full"
+                formControlName="budgetId"
+                (change)="onInputChange($event)"
+              />
+            </div>
+            <form-error-label [control]="form.get('budgetId')!" />
+          </div>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Abajo full anchura - Itemizados-->
+  <div class="flex flex-col gap-2 border-t border-gray-300 pr-4">
+    <div class="border-b border-gray-900/10 pb-12">
+      <div class="mt-14 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+        <div class="sm:col-span-6">
+          <details class="collapse collapse-arrow bg-base-200">
+            <summary class="collapse-title text-xl font-medium">
+              Itemizado de Mercaderia
+            </summary>
+            <div class="collapse-content">
+              <itemized-material-table
+                [isVoucher]="true"
+                [itemizedMaterialsInput]="objInput().materials"
+                (itemizedMaterialsEvent)="onItemizedMaterialChange($event)"
+              />
+            </div>
+          </details>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-2 gap-2 border-t border-b border-gray-300 pr-4">
+    <!-- Left Side -->
+    <div class="flex flex-col gap-2 pr-4">
+      <div class="border-b border-gray-900/10 pb-12">
+        <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+          <div class="sm:col-span-6">
+            <label for="first-name" class="block text-sm/6 font-medium"
+              >Observaciones</label
+            >
+            <div class="mt-2">
+              <textarea
+                id="observations"
+                type="text"
+                name="observations"
+                placeholder="Observaciones"
+                class="textarea textarea-bordered textarea-lg w-full h-64"
+                formControlName="observations"
+                (change)="onInputChange($event)"
+              ></textarea>
+            </div>
+            <form-error-label [control]="form.get('observations')!" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Side -->
+    <!-- <div class="flex flex-col gap-2">
+      <div class="border-b border-gray-900/10 pb-12">
+        <div class="mt-10 grid grid-flow-row auto-rows-max">
+          <div class="grid grid-cols-3 gap-x-6 gap-y-8">
+          </div>
+        </div>
+      </div>
+    </div> -->
+  </div>
+</form>
+
+@if (wasSaved()) {
+<div class="alert alert-success fixed bottom-4 right-4 w-80 animate-fadeIn">
+  <span>Datos actualizados correctamente</span>
+</div>
+}

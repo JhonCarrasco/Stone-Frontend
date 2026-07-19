@@ -1,1 +1,488 @@
-<p>dispatch-details works!</p>,
+<h1 class="text-2xl font-bold">
+  Despacho {{ objInput().id ? objInput().id : 'Nuevo' }}
+</h1>
+<div class="divider col-span-2"></div>
+
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <div class="grid grid-cols-2 gap-2">
+    <!--GUARDAR-->
+    <div class="col-span-2">
+      <div class="flex justify-end h-12">
+        <button class="btn btn-secondary" type="submit">
+          <!-- <span class="loading loading-spinner loading-sm"></span> -->
+          Guardar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Top full width - titulo - Informacion despacho de mercaderia-->
+  <div class="flex flex-col gap-2 border-t border-gray-300 pr-4">
+    <div class="border-b border-gray-900/10">
+      <h2 class="text-lg font-bold">Despacho de Mercaderia</h2>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-2 gap-2 border-t border-b border-gray-300 pr-4">
+    <!-- Left Side -->
+    <div class="flex flex-col gap-2 border-r border-gray-300 pr-4">
+      <div class="border-b border-gray-900/10 pb-12">
+        <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+          <div class="sm:col-span-3">
+            <label for="first-name" class="block text-sm/6 font-medium"
+              >Tipo de Documento</label
+            >
+            <div class="mt-2">
+              <select
+                class="select select-bordered w-full"
+                (change)="onSelectedDocumentTypeChange($event)"
+              >
+                <option>Seleccionar tipo documento</option>
+                @for (item of documentType(); track item.id) {
+                @if(documentTypeDescriptionSelected() === item.description ){
+                <option selected [value]="item.id">{{item.description}}</option>
+                }@else {
+                <option [value]="item.id">{{item.description}}</option>
+                } }
+              </select>
+            </div>
+            <form-error-label [control]="form.get('currencyType')!" />
+          </div>
+
+          <div class="sm:col-span-2">
+            <label for="first-name" class="block text-sm/6 font-medium"
+              >N° Ingreso</label
+            >
+            <div class="mt-3">
+              <input
+                readonly
+                id="id"
+                type="text"
+                name="id"
+                placeholder="N° Ingreso"
+                [class.border-red-500]="form.get('id')?.errors ?? false"
+                class="input input-bordered w-full bg-neutral"
+                formControlName="id"
+                (change)="onInputChange($event)"
+              />
+            </div>
+            <form-error-label [control]="form.get('id')!" />
+          </div>
+
+          <div class="sm:col-span-3">
+            <label for="first-name" class="block text-sm/6 font-medium"
+              >Fecha Ingreso</label
+            >
+            <div class="mt-2">
+              <calendar-datepicker
+                [dateInput]="objInput().guideDate"
+                (guideDateEvent)="onGuideDateChange($event)"
+              />
+            </div>
+            <form-error-label [control]="form.get('guideDate')!" />
+          </div>
+
+          <div class="sm:col-span-2">
+            <label for="first-name" class="block text-sm/6 font-medium"
+              >Folio</label
+            >
+            <div class="mt-2">
+              <input
+                id="folio"
+                type="text"
+                name="folio"
+                placeholder="Folio"
+                [class.border-red-500]="form.get('folio')?.errors ?? false"
+                class="input input-bordered w-full"
+                formControlName="folio"
+                (change)="onInputChange($event)"
+              />
+            </div>
+            <form-error-label [control]="form.get('folio')!" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Side -->
+    <div class="flex flex-col gap-2">
+      <div class="border-b border-gray-900/10 pb-12">
+        <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+          <div class="sm:col-span-2">
+            <label for="first-name" class="block text-sm/6 font-medium"
+              >Rut Proveedor</label
+            >
+            <div class="mt-2">
+              <input
+                list="providers-list"
+                id="ice-cream-choice"
+                name="ice-cream-choice"
+                type="text"
+                placeholder="Proveedor"
+                class="input input-bordered w-full"
+                formControlName="providerRut"
+                [class.border-red-500]="form.get('providerRut')?.errors ?? false"
+                (change)="onSelectionProviderChange($event)"
+              />
+            </div>
+            <datalist
+              id="providers-list"
+              class="datalist datalist-bodered w-full max-h-[100px] overflow-y-auto"
+            >
+              <option disabled selected>Seleccionar un proveedor</option>
+              @for (item of providersResource.value()?.data; track item.id) {
+              <option [value]="item.personRut" [tabIndex]="item.id"></option>
+              }
+            </datalist>
+          </div>
+
+          <div class="sm:col-span-4">
+            <label for="first-name" class="block text-sm/6 font-medium"
+              >Proveedor</label
+            >
+            <div class="mt-2">
+              <input
+                readonly
+                id="providerName"
+                type="text"
+                name="providerName"
+                placeholder="Nombre del Proveedor"
+                [class.border-red-500]="form.get('providerName')?.errors ?? false"
+                class="input input-bordered w-full bg-neutral"
+                formControlName="providerName"
+                (change)="onInputChange($event)"
+              />
+            </div>
+            <form-error-label [control]="form.get('providerName')!" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- full informacion -->
+  <div class="flex flex-col gap-2 border-gray-300 pr-2">
+    <div class="border-b border-gray-900/10 pb-12">
+      <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+        <div class="sm:col-span-4">
+          <label for="first-name" class="block text-sm/6 font-medium"
+            >Dirección</label
+          >
+          <div class="mt-2">
+            <input
+              id="address"
+              type="text"
+              name="address"
+              placeholder="Dirección"
+              [class.border-red-500]="form.get('address')?.errors ?? false"
+              class="input input-bordered w-full"
+              formControlName="address"
+              (change)="onInputChange($event)"
+            />
+          </div>
+          <form-error-label [control]="form.get('address')!" />
+        </div>
+        <div class="sm:col-span-2 justify-self-start">
+          <label for="first-name" class="block text-sm/6 font-medium"
+            >Comuna</label
+          >
+          <div class="mt-2">
+            <select
+              class="select select-bordered w-full"
+              (change)="onSelectedCommuneChange($event)"
+            >
+              <option>Seleccionar comuna</option>
+              @for (item of communesResource.value()?.data; track item.id) {
+              @if(this.objInput().commune === item.id ){
+              <option selected [value]="item.id">{{item.description}}</option>
+              }@else {
+              <option [value]="item.id">{{item.description}}</option>
+              } }
+            </select>
+            <!-- <p>Currently selected: {{ communeDescriptionSelected() }}</p> -->
+          </div>
+          <form-error-label [control]="form.get('commune')!" />
+        </div>
+
+        <div class="sm:col-span-3 justify-self-end">
+          <label for="first-name" class="block text-sm/6 font-medium"
+            >Zona</label
+          >
+          <div class="mt-2">
+            <select
+              class="select select-bordered w-full"
+              (change)="onSelectedZoneChange($event)"
+            >
+              <option>Seleccionar zona de la obra</option>
+              @for (item of zoneList(); track item.id) {
+              @if(zoneDescriptionSelected() === item.description ){
+              <option selected [value]="item.id">{{item.description}}</option>
+              }@else {
+              <option [value]="item.id">{{item.description}}</option>
+              } }
+            </select>
+          </div>
+          <form-error-label [control]="form.get('zone')!" />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Abajo full anchura - Itemizados-->
+  <div class="flex flex-col gap-2 border-t border-gray-300 pr-4">
+    <div class="border-b border-gray-900/10 pb-12">
+      <div class="mt-14 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+        <div class="sm:col-span-6">
+          <details class="collapse collapse-arrow bg-base-200">
+            <summary class="collapse-title text-xl font-medium">
+              Itemizado de Mercaderia
+            </summary>
+            <div class="collapse-content">
+              <itemized-material-table
+                [isVoucher]="false"
+                [itemizedMaterialsInput]="objInput().materials"
+                (itemizedMaterialsEvent)="onItemizedMaterialChange($event)"
+              />
+            </div>
+          </details>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-2 gap-2 border-t border-b border-gray-300 pr-4">
+    <!-- Left Side -->
+    <div class="flex flex-col gap-2 border-r border-gray-300 pr-4">
+      <div class="border-b border-gray-900/10 pb-12">
+        <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+          <div class="sm:col-span-6">
+            <label for="first-name" class="block text-sm/6 font-medium"
+              >Observaciones</label
+            >
+            <div class="mt-2">
+              <textarea
+                id="observations"
+                type="text"
+                name="observations"
+                placeholder="Observaciones"
+                class="textarea textarea-bordered textarea-lg w-full h-64"
+                formControlName="observations"
+                (change)="onInputChange($event)"
+              ></textarea>
+            </div>
+            <form-error-label [control]="form.get('observations')!" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Side -->
+    <div class="flex flex-col gap-2">
+      <div class="border-b border-gray-900/10 pb-12">
+        <div class="mt-10 grid grid-flow-row auto-rows-max">
+          <div class="grid grid-cols-3 gap-x-6 gap-y-8">
+            <div class="sm:col-span-1">
+              <label for="first-name" class="block text-sm/6 font-medium"
+                >Moneda de Ingreso</label
+              >
+              <div class="mt-2">
+                <select
+                  class="select select-bordered w-full"
+                  (change)="onSelectedCurrentTypeChange($event)"
+                >
+                  <option>Seleccionar moneda</option>
+                  @for (item of currentTypeData(); track item.id) {
+                  @if(currentTypeDescriptionSelected() === item.description ){
+                  <option selected [value]="item.id">
+                    {{item.description}}
+                  </option>
+                  }@else {
+                  <option [value]="item.id">{{item.description}}</option>
+                  } }
+                </select>
+              </div>
+              <form-error-label [control]="form.get('currencyType')!" />
+            </div>
+            <!-- TODO: implement input to currency value for dolar and euro -->
+            @if(this.form.get('currencyType')?.value === 2 ||
+            this.form.get('currencyType')?.value === 3) {
+            <div class="sm:col-span-1">
+              <label for="first-name" class="block text-sm/6 font-medium"
+                >Valor de la moneda</label
+              >
+              <div class="mt-2">
+                <input
+                  id="valueCurrency"
+                  type="text"
+                  name="valueCurrency"
+                  placeholder="Valor de la moneda"
+                  [class.border-red-500]="form.get('valueCurrency')?.errors ?? false"
+                  class="input input-bordered w-full"
+                  formControlName="valueCurrency"
+                  (change)="onInputChange($event)"
+                />
+              </div>
+              <form-error-label [control]="form.get('valueCurrency')!" />
+            </div>
+            }
+          </div>
+
+          <div class="grid grid-cols-3 gap-x-6 gap-y-8 mt-4">
+            <div class="sm:col-span-1">
+              <label for="first-name" class="block text-sm/6 font-medium"
+                >Neto</label
+              >
+              <div class="mt-2">
+                <input
+                  readonly
+                  id="neto"
+                  type="text"
+                  name="neto"
+                  placeholder="Neto"
+                  [class.border-red-500]="form.get('neto')?.errors ?? false"
+                  class="input input-bordered w-full bg-neutral"
+                  formControlName="neto"
+                  (change)="onInputChange($event)"
+                />
+              </div>
+              <form-error-label [control]="form.get('neto')!" />
+            </div>
+
+            @if(this.form.get('netoConversion')?.value !== null){
+            <div class="sm:col-span-1">
+              <label for="first-name" class="block text-sm/6 font-medium"
+                >Neto Conversión</label
+              >
+              <div class="mt-2">
+                <input
+                  readonly
+                  id="netoConversion"
+                  type="text"
+                  name="netoConversion"
+                  placeholder="Neto Conversión"
+                  [class.border-red-500]="form.get('netoConversion')?.errors ?? false"
+                  class="input input-bordered w-full bg-neutral"
+                  formControlName="netoConversion"
+                  (change)="onInputChange($event)"
+                />
+              </div>
+              <form-error-label [control]="form.get('netoConversion')!" />
+            </div>
+            }
+          </div>
+
+          <div class="grid grid-cols-3 gap-x-6 gap-y-8 mt-4">
+            <div class="sm:col-span-1">
+              <label for="first-name" class="block text-sm/6 font-medium"
+                >Iva</label
+              >
+              <div class="mt-2">
+                <input
+                  readonly
+                  id="taxRate"
+                  type="text"
+                  name="taxRate"
+                  placeholder="Iva"
+                  [class.border-red-500]="form.get('taxRate')?.errors ?? false"
+                  class="input input-bordered w-full bg-neutral"
+                  formControlName="taxRate"
+                  (change)="onInputChange($event)"
+                />
+              </div>
+              <form-error-label [control]="form.get('taxRate')!" />
+            </div>
+            <div class="sm:col-span-1">
+              <label for="first-name" class="block text-sm/6 font-medium"
+                >Iva Monto</label
+              >
+              <div class="mt-2">
+                <input
+                  readonly
+                  id="taxAmount"
+                  type="text"
+                  name="taxAmount"
+                  placeholder="Iva Monto"
+                  [class.border-red-500]="form.get('taxAmount')?.errors ?? false"
+                  class="input input-bordered w-full bg-neutral"
+                  formControlName="taxAmount"
+                  (change)="onInputChange($event)"
+                />
+              </div>
+              <form-error-label [control]="form.get('taxAmount')!" />
+            </div>
+            @if(this.form.get('taxConversion')?.value !== null){
+            <div class="sm:col-span-1">
+              <label for="first-name" class="block text-sm/6 font-medium"
+                >Iva Conversión</label
+              >
+              <div class="mt-2">
+                <input
+                  readonly
+                  id="taxConversion"
+                  type="text"
+                  name="taxConversion"
+                  placeholder="Iva Conversión"
+                  [class.border-red-500]="form.get('taxConversion')?.errors ?? false"
+                  class="input input-bordered w-full bg-neutral"
+                  formControlName="taxConversion"
+                  (change)="onInputChange($event)"
+                />
+              </div>
+              <form-error-label [control]="form.get('taxConversion')!" />
+            </div>
+            }
+          </div>
+
+          <div class="grid grid-cols-3 gap-x-6 gap-y-8 mt-4">
+            <div class="sm:col-span-1">
+              <label for="first-name" class="block text-sm/6 font-medium"
+                >Total</label
+              >
+              <div class="mt-2">
+                <input
+                  readonly
+                  id="totalValue"
+                  type="text"
+                  name="totalValue"
+                  placeholder="Total Value"
+                  [class.border-red-500]="form.get('totalValue')?.errors ?? false"
+                  class="input input-bordered w-full bg-neutral"
+                  formControlName="totalValue"
+                  (change)="onInputChange($event)"
+                />
+              </div>
+              <form-error-label [control]="form.get('totalValue')!" />
+            </div>
+            @if(this.form.get('totalConversion')?.value !== null){
+            <div class="sm:col-span-1">
+              <label for="first-name" class="block text-sm/6 font-medium"
+                >Total Conversión</label
+              >
+              <div class="mt-2">
+                <input
+                  readonly
+                  id="totalConversion"
+                  type="text"
+                  name="totalConversion"
+                  placeholder="Total Conversión"
+                  [class.border-red-500]="form.get('totalConversion')?.errors ?? false"
+                  class="input input-bordered w-full bg-neutral"
+                  formControlName="totalConversion"
+                  (change)="onInputChange($event)"
+                />
+              </div>
+              <form-error-label [control]="form.get('totalConversion')!" />
+            </div>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
+
+@if (wasSaved()) {
+<div class="alert alert-success fixed bottom-4 right-4 w-80 animate-fadeIn">
+  <span>Datos actualizados correctamente</span>
+</div>
+}

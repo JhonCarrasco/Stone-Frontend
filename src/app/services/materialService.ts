@@ -15,13 +15,13 @@ const baseUrl = environment.baseUrl;
 const emptyMaterialGuide: MaterialGuideGeneric = {
   id: 0,
   active: null,
-  createAt: null,
+  createAt: new Date(),
   updatedAt: null,
   folio: '',
   documentType: 0,
   observations: '',
   currencyType: 0,
-  valueCurrency: null,
+  valueCurrency: 0,
   customer: {
     id: 0,
     active: null,
@@ -36,7 +36,7 @@ const emptyMaterialGuide: MaterialGuideGeneric = {
     bankAccount: null,
     contacts: null,
   },
-  customerId: 0,
+  customerId: null,
   provider: {
     id: 0,
     active: null,
@@ -49,6 +49,8 @@ const emptyMaterialGuide: MaterialGuideGeneric = {
     contacts: null,
   },
   providerId: 0,
+  providerRut: null,
+  providerName: null,
   neto: 0,
   taxRate: 0,
   totalValue: 0,
@@ -58,9 +60,10 @@ const emptyMaterialGuide: MaterialGuideGeneric = {
   projectTo: null,
   budgetId: null,
   file: null,
-  locationId: null,
   address: null,
   zone: null,
+  commune: null,
+  netoConversion: null,
 };
 
 @Injectable({ providedIn: 'root' })

@@ -48,8 +48,6 @@ export class MaterialsDispatchPage {
 
     productData$.subscribe((response) => {
       this.dispatchesResource.set(response);
-      // console.log('onSearchDispatchChange', response);
-      // this.searchText.set('');
     });
   }
 }
