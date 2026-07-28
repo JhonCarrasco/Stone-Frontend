@@ -12,10 +12,7 @@ import {
   currencyTypeData,
   getCurrencyTypeDescription,
 } from 'src/app/constant/currencyTypeData';
-import {
-  documentType,
-  getDocumentTypeDescription,
-} from 'src/app/constant/documentTypeData';
+import { documentType } from 'src/app/constant/documentTypeData';
 import { ItemizedMaterialTable } from 'src/app/materials/components/itemizedMaterial-table/itemizedMaterial-table';
 import { MaterialService } from 'src/app/services/materialService';
 import { ProviderService } from 'src/app/services/providerService';
@@ -42,8 +39,8 @@ export class ReceptionDetails implements OnInit {
   wasSaved = signal(false);
   currentTypeData = signal(currencyTypeData);
   documentType = signal(documentType.filter((t) => t.type === 1)); // filtrar solo los tipos de documento de recepción (type === 1)
-  currentTypeDescriptionSelected = signal('');
-  documentTypeDescriptionSelected = signal('');
+  // currentTypeDescriptionSelected = signal('');
+  // documentTypeDescriptionSelected = signal('');
 
   form = this.fb.group({
     id: [0],
@@ -83,9 +80,9 @@ export class ReceptionDetails implements OnInit {
     this.form.patchValue({
       documentType: Number(value) ?? null,
     });
-    this.documentTypeDescriptionSelected.set(
-      getDocumentTypeDescription(Number(value) ?? null),
-    );
+    // this.documentTypeDescriptionSelected.set(
+    //   getDocumentTypeDescription(Number(value) ?? null),
+    // );
   }
   onGuideDateChange(event: Date) {
     // console.log('ReceptionDetails.onGuideDateChange', event);
@@ -104,20 +101,20 @@ export class ReceptionDetails implements OnInit {
       taxConversion: null,
       totalConversion: null,
     });
-    this.currentTypeDescriptionSelected.set(
-      getCurrencyTypeDescription(Number(value) ?? null),
-    );
+    // this.currentTypeDescriptionSelected.set(
+    //   getCurrencyTypeDescription(Number(value) ?? null),
+    // );
   }
   onSelectionProviderChange(event: Event) {
     const value = (event.target as HTMLSelectElement).value;
     const selectedOption = this.providersResource
       .value()
-      ?.data.find((option) => option.personRut === value);
+      ?.data.find((option) => option.rut === value);
 
     this.form.patchValue({
       provider: !selectedOption ? null : selectedOption,
-      providerRut: !selectedOption ? null : selectedOption.personRut,
-      providerName: !selectedOption ? null : selectedOption.personName,
+      providerRut: !selectedOption ? null : selectedOption.rut,
+      providerName: !selectedOption ? null : selectedOption.displayName,
     });
   }
   onItemizedMaterialChange(event: Material[]) {
@@ -174,18 +171,18 @@ export class ReceptionDetails implements OnInit {
 
     formLike = {
       ...formLike,
-      providerRut: provider?.personRut ?? null,
-      providerName: provider?.personName ?? null,
+      providerRut: provider?.person.rut ?? null,
+      providerName: provider?.person.displayName ?? null,
       guideDate: guideDate ?? new Date(),
       taxRate: taxRate ? taxRate * 100 : _taxRate, // valor entero para vista
-    } as Partial<MaterialGuideGeneric>;
+    } as unknown as Partial<MaterialGuideGeneric>;
 
     this.form.patchValue(formLike as any);
   }
 
   CalculateTotals() {
-    console.log('CalculateTotals.objInput', this.objInput());
-    console.log('CalculateTotals.form', this.form.value);
+    // console.log('CalculateTotals.objInput', this.objInput());
+    // console.log('CalculateTotals.form', this.form.value);
     const {
       totalValue,
       taxRate,
@@ -218,12 +215,12 @@ export class ReceptionDetails implements OnInit {
   ngOnInit(): void {
     // console.log('ReceptionDetails.ngOnInit', this.objInput());
     this.setFormValue(this.objInput());
-    this.documentTypeDescriptionSelected.set(
-      getDocumentTypeDescription(this.objInput().documentType ?? null),
-    );
-    this.currentTypeDescriptionSelected.set(
-      getCurrencyTypeDescription(this.objInput().currencyType ?? null),
-    );
+    // this.documentTypeDescriptionSelected.set(
+    //   getDocumentTypeDescription(this.objInput().documentType ?? null),
+    // );
+    // this.currentTypeDescriptionSelected.set(
+    //   getCurrencyTypeDescription(this.objInput().currencyType ?? null),
+    // );
     this.CalculateTotals();
   }
 

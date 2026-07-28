@@ -1,0 +1,37 @@
+<div class="flex justify-start content-center border-b border-gray-900/10">
+  <div class="col-span-3 ml-4 w-1/2">
+    <input
+      list="searchProviderText-list"
+      id="search-budget-text"
+      type="text"
+      name="searchProviderText"
+      placeholder="Buscar proveedor"
+      class="input input-bordered w-full"
+      (change)="onSelectionSearchProviderChange($event)"
+      [value]="searchProviderText()"
+    />
+    @if(this.withDatalist()){
+    <datalist
+      id="searchProviderText-list"
+      class="datalist datalist-bodered w-full max-h-[100px] overflow-y-auto"
+    >
+      <option disabled selected>Seleccionar un Presupuesto</option>
+      @for (item of providersFound(); track item.id) {
+      <!-- <option [value]="item.projectName" [tabIndex]="item.id"></option> -->
+      <option [tabIndex]="item.id">{{item.id}} - {{item.displayName}}</option>
+
+      }
+    </datalist>
+    }
+  </div>
+
+  <div class="col-span-2 ml-2">
+    <button
+      class="btn btn-primary"
+      type="button"
+      (click)="onSearchProviderBtn()"
+    >
+      Buscar
+    </button>
+  </div>
+</div>

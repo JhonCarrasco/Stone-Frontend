@@ -44,8 +44,8 @@ export class DispatchDetails implements OnInit {
   wasSaved = signal(false);
   currentTypeData = signal(currencyTypeData);
   documentType = signal(documentType.filter((t) => t.type === 2)); // filtrar solo los tipos de documento de dispatch (type === 2)
-  currentTypeDescriptionSelected = signal('');
-  documentTypeDescriptionSelected = signal('');
+  // currentTypeDescriptionSelected = signal('');
+  // documentTypeDescriptionSelected = signal('');
   zoneList = signal(zoneList);
   zoneDescriptionSelected = signal('');
   // communeDescriptionSelected = signal('');
@@ -88,9 +88,9 @@ export class DispatchDetails implements OnInit {
     this.form.patchValue({
       documentType: Number(value) ?? null,
     });
-    this.documentTypeDescriptionSelected.set(
-      getDocumentTypeDescription(Number(value) ?? null),
-    );
+    // this.documentTypeDescriptionSelected.set(
+    //   getDocumentTypeDescription(Number(value) ?? null),
+    // );
   }
   onGuideDateChange(event: Date) {
     //actualizar guideDate en form
@@ -108,20 +108,20 @@ export class DispatchDetails implements OnInit {
       taxConversion: null,
       totalConversion: null,
     });
-    this.currentTypeDescriptionSelected.set(
-      getCurrencyTypeDescription(Number(value) ?? null),
-    );
+    // this.currentTypeDescriptionSelected.set(
+    //   getCurrencyTypeDescription(Number(value) ?? null),
+    // );
   }
   onSelectionProviderChange(event: Event) {
     const value = (event.target as HTMLSelectElement).value;
     const selectedOption = this.providersResource
       .value()
-      ?.data.find((option) => option.personRut === value);
+      ?.data.find((option) => option.rut === value);
 
     this.form.patchValue({
       provider: !selectedOption ? null : selectedOption,
-      providerRut: !selectedOption ? null : selectedOption.personRut,
-      providerName: !selectedOption ? null : selectedOption.personName,
+      providerRut: !selectedOption ? null : selectedOption.rut,
+      providerName: !selectedOption ? null : selectedOption.displayName,
     });
   }
 
@@ -209,17 +209,17 @@ export class DispatchDetails implements OnInit {
 
     formLike = {
       ...formLike,
-      providerRut: provider?.personRut ?? null,
-      providerName: provider?.personName ?? null,
+      providerRut: provider?.person.rut ?? null,
+      providerName: provider?.person.displayName ?? null,
       guideDate: guideDate ?? new Date(),
       taxRate: taxRate ? taxRate * 100 : _taxRate, // valor entero para vista
-    } as Partial<MaterialGuideGeneric>;
+    } as unknown as Partial<MaterialGuideGeneric>;
     this.form.patchValue(formLike as any);
   }
 
   CalculateTotals() {
-    console.log('CalculateTotals.objInput', this.objInput());
-    console.log('CalculateTotals.form', this.form.value);
+    // console.log('CalculateTotals.objInput', this.objInput());
+    // console.log('CalculateTotals.form', this.form.value);
     const { totalValue, taxRate, neto } = this.objInput();
     const { valueCurrency: valueCurrencyForm, currencyType } = this.form.value;
 
@@ -242,12 +242,12 @@ export class DispatchDetails implements OnInit {
   ngOnInit(): void {
     // console.log('DispatchDetails.ngOnInit.objInput', this.objInput());
     this.setFormValue(this.objInput());
-    this.documentTypeDescriptionSelected.set(
-      getDocumentTypeDescription(this.objInput().documentType ?? null),
-    );
-    this.currentTypeDescriptionSelected.set(
-      getCurrencyTypeDescription(this.objInput().currencyType ?? null),
-    );
+    // this.documentTypeDescriptionSelected.set(
+    //   getDocumentTypeDescription(this.objInput().documentType ?? null),
+    // );
+    // this.currentTypeDescriptionSelected.set(
+    //   getCurrencyTypeDescription(this.objInput().currencyType ?? null),
+    // );
     this.zoneDescriptionSelected.set(
       getZoneDescription(this.objInput().zone ?? null),
     );

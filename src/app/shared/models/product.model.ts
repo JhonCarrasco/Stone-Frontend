@@ -19,39 +19,10 @@ export interface Product {
   providerId?: number | null;
 }
 
-// export interface ProductsResponse {
-//   count: number;
-//   pages: number;
-//   products: Product[];
-// }
-
 export interface BaseEntityResponse {
   description: string;
   id: number;
   active: boolean;
   createAt: Date;
   updatedAt: null;
-}
-
-// export interface Provider {
-//   id: number;
-//   active: boolean;
-//   createAt: Date;
-//   updatedAt: null;
-//   personId: number;
-//   locationId: number;
-//   bankAccountId: number;
-//   contacts: Contact[];
-// }
-
-export interface Contact {
-  contactId: number;
-  phone: string;
-  email: string;
-  personId: number;
-  rut: string;
-  displayName: string;
-  businessActivity: string;
-  providerId: number;
-  providerName: string;
 }

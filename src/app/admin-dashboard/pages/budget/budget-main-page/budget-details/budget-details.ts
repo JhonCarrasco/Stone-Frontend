@@ -223,7 +223,9 @@ export class BudgetDetails implements OnInit {
       this.router.navigate(['/admin/budgets', response.data]);
     } else {
       const customerObject = await firstValueFrom(
-        this.customerService.getCustomerById(this.budget().customer.id),
+        this.customerService.getCustomerById(
+          this.budget().customer.person.id.toString(),
+        ),
       );
 
       if (customerObject.data.id !== budgetLike.customerId) return;

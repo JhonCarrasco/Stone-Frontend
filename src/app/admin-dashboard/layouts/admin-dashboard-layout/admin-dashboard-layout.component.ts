@@ -11,4 +11,15 @@ export class AdminDashboardLayoutComponent {
   authService = inject(AuthService);
 
   user = computed(() => this.authService.user());
+
+  activeIdx: number | null = 0;
+
+  onToggle(index: number, event: Event) {
+    const isOpen = (event.target as HTMLDetailsElement).open;
+    if (isOpen) {
+      this.activeIdx = index;
+    } else if (this.activeIdx === index) {
+      this.activeIdx = null;
+    }
+  }
 }

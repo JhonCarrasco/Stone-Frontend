@@ -229,7 +229,7 @@
     >
       <option disabled selected>Seleccionar un proveedor</option>
       @for (item of providersResource.value()?.data; track item.id) {
-        <option [value]="item.personName" [tabIndex]="item.id"></option>
+        <option [value]="item.displayName" [tabIndex]="item.id"></option>
       }
     </datalist>
     <!-- <form-error-label [control]="productForm.get('providerName')!" /> -->
