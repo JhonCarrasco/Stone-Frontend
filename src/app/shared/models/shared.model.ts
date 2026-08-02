@@ -1,5 +1,5 @@
 import { BaseEntity } from './baseEntity.model';
 
 export interface Shared<T> extends BaseEntity {
-  description: T;
+  description: T | null;
 }

@@ -132,11 +132,11 @@ export class ProductDetailsComponent implements OnInit {
     const value = (event.target as HTMLSelectElement).value;
     const selectedOption = this.providersResource
       .value()
-      ?.data.find((option) => option.personName === value);
+      ?.data.find((option) => option.displayName === value);
 
     this.productForm.patchValue({
       providerId: !selectedOption ? null : selectedOption.id,
-      providerName: !selectedOption ? null : selectedOption.personName,
+      providerName: !selectedOption ? null : selectedOption.displayName,
     });
   }
 

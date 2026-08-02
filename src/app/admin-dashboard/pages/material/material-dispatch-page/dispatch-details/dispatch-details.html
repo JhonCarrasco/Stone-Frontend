@@ -39,7 +39,7 @@
               >
                 <option>Seleccionar tipo documento</option>
                 @for (item of documentType(); track item.id) {
-                @if(documentTypeDescriptionSelected() === item.description ){
+                @if(this.objInput().documentType === item.id ){
                 <option selected [value]="item.id">{{item.description}}</option>
                 }@else {
                 <option [value]="item.id">{{item.description}}</option>
@@ -71,7 +71,7 @@
 
           <div class="sm:col-span-3">
             <label for="first-name" class="block text-sm/6 font-medium"
-              >Fecha Ingreso</label
+              >Fecha</label
             >
             <div class="mt-2">
               <calendar-datepicker
@@ -131,7 +131,7 @@
             >
               <option disabled selected>Seleccionar un proveedor</option>
               @for (item of providersResource.value()?.data; track item.id) {
-              <option [value]="item.personRut" [tabIndex]="item.id"></option>
+              <option [value]="item.person.rut" [tabIndex]="item.id"></option>
               }
             </datalist>
           </div>
@@ -292,7 +292,7 @@
                 >
                   <option>Seleccionar moneda</option>
                   @for (item of currentTypeData(); track item.id) {
-                  @if(currentTypeDescriptionSelected() === item.description ){
+                  @if(this.objInput().currencyType === item.id ){
                   <option selected [value]="item.id">
                     {{item.description}}
                   </option>

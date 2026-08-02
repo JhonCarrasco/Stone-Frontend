@@ -11,6 +11,10 @@ import { MaterialsVoucherPage } from './pages/material/materials-voucher-page/ma
 import { MaterialReceptionPage } from './pages/material/material-reception-page/material-reception-page';
 import { MaterialDispatchPage } from './pages/material/material-dispatch-page/material-dispatch-page';
 import { MaterialVoucherPage } from './pages/material/material-voucher-page/material-voucher-page';
+import { CustomersMainPage } from './pages/maintenance/customers-main-page/customers-main-page';
+import { CustomerMainPage } from './pages/maintenance/customer-main-page/customer-main-page';
+import { ProvidersMainPage } from './pages/maintenance/providers-main-page/providers-main-page';
+import { ProviderMainPage } from './pages/maintenance/provider-main-page/provider-main-page';
 
 export const adminDashboardRoutes: Routes = [
   {
@@ -20,7 +24,7 @@ export const adminDashboardRoutes: Routes = [
     children: [
       {
         path: '',
-        component: MaterialsVoucherPage,
+        component: ProvidersMainPage,
       },
       {
         path: 'products',
@@ -29,6 +33,22 @@ export const adminDashboardRoutes: Routes = [
       {
         path: 'products/:id',
         component: ProductAdminPageComponent,
+      },
+      {
+        path: 'customers',
+        component: CustomersMainPage,
+      },
+      {
+        path: 'customers/:id',
+        component: CustomerMainPage,
+      },
+      {
+        path: 'providers',
+        component: ProvidersMainPage,
+      },
+      {
+        path: 'providers/:id',
+        component: ProviderMainPage,
       },
       {
         path: 'budgets',
@@ -45,7 +65,7 @@ export const adminDashboardRoutes: Routes = [
       },
       {
         path: 'materials/reception/:id',
-        component: MaterialReceptionPage, //TODO: create material reception page
+        component: MaterialReceptionPage,
       },
       {
         path: 'materials/dispatch',
@@ -53,7 +73,7 @@ export const adminDashboardRoutes: Routes = [
       },
       {
         path: 'materials/dispatch/:id',
-        component: MaterialDispatchPage, //TODO: create material dispatch page
+        component: MaterialDispatchPage,
       },
       {
         path: 'materials/voucher',
@@ -61,7 +81,7 @@ export const adminDashboardRoutes: Routes = [
       },
       {
         path: 'materials/voucher/:id',
-        component: MaterialVoucherPage, //TODO: create material voucher page
+        component: MaterialVoucherPage,
       },
       {
         path: '**',

@@ -11,7 +11,7 @@
         <th>Folio</th>
         <th>Tipo</th>
         <th>Valor Total</th>
-        <th>Fecha Creación</th>
+        <th>Fecha</th>
         <th>Rut Proveedor</th>
         <th>Proveedor</th>
         <th></th>
@@ -38,8 +38,8 @@
         <td>{{ onDocumentTypeDescription(item.documentType) }}</td>
         <td>{{ item.totalValue | currency }}</td>
         <td>{{ item.guideDate | date: 'dd/MM/yyyy' }}</td>
-        <td>{{ item.provider.personRut }}</td>
-        <td>{{ item.provider.personName }}</td>
+        <td>{{ item.provider.person.rut }}</td>
+        <td>{{ item.provider.person.displayName }}</td>
         <!-- <td>{{ onStateDescription(item.state) }}</td> -->
         <th>
           <a

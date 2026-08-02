@@ -1,0 +1,365 @@
+<h1 class="text-2xl font-bold">
+  Cliente {{ objInput().id ? objInput().id : 'Nuevo' }}
+</h1>
+<div class="divider col-span-2"></div>
+
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <div class="grid grid-cols-2 gap-2">
+    <!--GUARDAR-->
+    <div class="col-span-2">
+      <div class="flex justify-end h-12">
+        <button class="btn btn-secondary" type="submit">
+          <!-- <span class="loading loading-spinner loading-sm"></span> -->
+          Guardar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Top full width - titulo - Informacion general cliente-->
+  <div class="flex flex-col gap-2 border-t border-gray-300 pr-4">
+    <div class="border-b border-gray-900/10">
+      <h2 class="text-lg font-bold">Información de Cliente</h2>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-2 gap-2 border-t border-b border-gray-300 pr-4">
+    <!-- Left Side -->
+    <div class="flex flex-col gap-2 border-r border-gray-300 pr-4">
+      <div class="border-b border-gray-900/10 pb-12">
+        <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+          <div class="sm:col-span-1">
+            <label for="first-name" class="block text-sm/6 font-medium"
+              >N° Cliente</label
+            >
+            <div class="mt-2">
+              <input
+                readonly
+                id="id"
+                type="number"
+                name="id"
+                placeholder="N° Cliente"
+                [class.border-red-500]="form.get('id')?.errors ?? false"
+                class="input input-bordered w-full bg-neutral"
+                formControlName="id"
+                (change)="onInputChange($event)"
+              />
+            </div>
+            <!-- <form-error-label [control]="form.get('id')!" /> -->
+          </div>
+
+          <div class="sm:col-span-2">
+            <label for="first-name" class="block text-sm/6 font-medium"
+              >Rut</label
+            >
+            <div class="mt-2">
+              <input
+                id="rut"
+                type="text"
+                name="rut"
+                placeholder="Rut"
+                [class.border-red-500]="form.get('rut')?.errors ?? false"
+                class="input input-bordered w-full"
+                formControlName="rut"
+                (change)="onInputChange($event)"
+              />
+            </div>
+            <form-error-label [control]="form.get('rut')!" />
+          </div>
+
+          <div class="sm:col-span-3">
+            <label for="first-name" class="block text-sm/6 font-medium"
+              >Natural/Juridico<</label
+            >
+            <div class="mt-2">
+              <select
+                name="typePersonId"
+                class="select select-bordered w-full"
+                (change)="onSelectedChange($event)"
+              >
+                <option>Seleccionar tipo persona</option>
+                @for (item of typePersonData(); track item.id) {
+                @if(this.objInput().person.typePerson === item.id ){
+                <option selected [value]="item.id">{{item.description}}</option>
+                }@else {
+                <option [value]="item.id">{{item.description}}</option>
+                } }
+              </select>
+            </div>
+            <!-- <form-error-label [control]="form.get('typePersonId')!" /> -->
+          </div>
+
+          <div class="sm:col-span-6">
+            <label for="first-name" class="block text-sm/6 font-medium"
+              >Nombre/Razón Social</label
+            >
+            <div class="mt-2">
+              <input
+                id="displayName"
+                type="text"
+                name="displayName"
+                placeholder="Nombre/Razón Social"
+                [class.border-red-500]="form.get('displayName')?.errors ?? false"
+                class="input input-bordered w-full"
+                formControlName="displayName"
+                (change)="onInputChange($event)"
+              />
+            </div>
+            <form-error-label [control]="form.get('displayName')!" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Side -->
+    <div class="flex flex-col gap-2">
+      <div class="border-b border-gray-900/10 pb-12">
+        <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+          <div class="sm:col-span-4">
+            <label for="first-name" class="block text-sm/6 font-medium"
+              >Email</label
+            >
+            <div class="mt-2">
+              <input
+                id="email"
+                type="text"
+                name="email"
+                placeholder="Correo electrónico"
+                [class.border-red-500]="form.get('email')?.errors ?? false"
+                class="input input-bordered w-full"
+                formControlName="email"
+                (change)="onInputChange($event)"
+              />
+            </div>
+            <form-error-label [control]="form.get('email')!" />
+          </div>
+
+          <div class="sm:col-span-2">
+            <label for="first-name" class="block text-sm/6 font-medium"
+              >Télefono</label
+            >
+            <div class="mt-2">
+              <input
+                id="phone"
+                type="text"
+                name="phone"
+                placeholder="Télefono de contacto"
+                [class.border-red-500]="form.get('phone')?.errors ?? false"
+                class="input input-bordered w-full"
+                formControlName="phone"
+                (change)="onInputChange($event)"
+              />
+            </div>
+            <form-error-label [control]="form.get('phone')!" />
+          </div>
+          <div class="sm:col-span-6">
+            <label for="first-name" class="block text-sm/6 font-medium"
+              >Giro</label
+            >
+            <div class="mt-2">
+              <input
+                id="businessActivity"
+                type="text"
+                name="businessActivity"
+                placeholder="Giro/Actividad"
+                [class.border-red-500]="form.get('businessActivity')?.errors ?? false"
+                class="input input-bordered w-full"
+                formControlName="businessActivity"
+                (change)="onInputChange($event)"
+              />
+            </div>
+            <!-- <form-error-label [control]="form.get('businessActivity')!" /> -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-2 gap-2 border-t border-b border-gray-300 pr-4">
+    <!-- Left Side -->
+    <div class="flex flex-col gap-2 border-r border-gray-300 pr-4">
+      <div class="border-b border-gray-900/10">
+        <h2 class="text-lg font-bold">Dirección</h2>
+      </div>
+    </div>
+
+    <!-- Right Side -->
+    <div class="flex flex-col gap-2">
+      <div class="border-b border-gray-900/10">
+        <h2 class="text-lg font-bold">Información Financiera</h2>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-2 gap-2 border-t border-b border-gray-300 pr-4">
+    <!-- Left Side -->
+    <div class="flex flex-col gap-2 border-r border-gray-300 pr-4">
+      <div class="border-b border-gray-900/10 pb-12">
+        <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+          <div class="sm:col-span-6">
+            <label for="first-name" class="block text-sm/6 font-medium"
+              >Dirección</label
+            >
+            <div class="mt-2">
+              <input
+                id="address"
+                type="text"
+                name="address"
+                placeholder="Dirección"
+                [class.border-red-500]="form.get('address')?.errors ?? false"
+                class="input input-bordered w-full"
+                formControlName="address"
+                (change)="onInputChange($event)"
+              />
+            </div>
+            <!-- <form-error-label [control]="form.get('address')!" /> -->
+          </div>
+
+          <div class="sm:col-span-3">
+            <label for="first-name" class="block text-sm/6 font-medium"
+              >Región</label
+            >
+            <div class="mt-2">
+              <select
+                name="regionId"
+                class="select select-bordered w-full"
+                (change)="onSelectedChange($event)"
+              >
+                <option>Seleccionar región</option>
+                @for (item of regionsResource.value()?.data; track item.id) {
+                @if(this.objInput()?.location?.region?.id === item.id ){
+                <option selected [value]="item.id">{{item.description}}</option>
+                }@else {
+                <option [value]="item.id">{{item.description}}</option>
+                } }
+              </select>
+              <!-- <p>Currently selected: {{ communeDescriptionSelected() }}</p> -->
+            </div>
+            <!-- <form-error-label [control]="form.get('regionId')!" /> -->
+          </div>
+          <div class="sm:col-span-3">
+            <label for="first-name" class="block text-sm/6 font-medium"
+              >Comuna</label
+            >
+            <div class="mt-2">
+              <select
+                name="communeId"
+                class="select select-bordered w-full"
+                (change)="onSelectedChange($event)"
+              >
+                <option>Seleccionar comuna</option>
+                @for (item of communesResource.value()?.data; track item.id) {
+                @if(this.objInput()?.location?.commune?.id === item.id ){
+                <option selected [value]="item.id">{{item.description}}</option>
+                }@else {
+                <option [value]="item.id">{{item.description}}</option>
+                } }
+              </select>
+              <!-- <p>Currently selected: {{ communeDescriptionSelected() }}</p> -->
+            </div>
+            <!-- <form-error-label [control]="form.get('communeId')!" /> -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Side -->
+    <div class="flex flex-col gap-2">
+      <div class="border-b border-gray-900/10 pb-12">
+        <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+          <div class="sm:col-span-3">
+            <label for="first-name" class="block text-sm/6 font-medium"
+              >Banco</label
+            >
+            <div class="mt-2">
+              <select
+                name="bankId"
+                class="select select-bordered w-full"
+                (change)="onSelectedChange($event)"
+              >
+                <option>Seleccionar banco</option>
+                @for (item of banksResource.value()?.data; track item.id) {
+                @if(this.objInput()?.bankAccount?.bank?.id === item.id ){
+                <option selected [value]="item.id">{{item.description}}</option>
+                }@else {
+                <option [value]="item.id">{{item.description}}</option>
+                } }
+              </select>
+              <!-- <p>Currently selected: {{ communeDescriptionSelected() }}</p> -->
+            </div>
+            <!-- <form-error-label [control]="form.get('bankId')!" /> -->
+          </div>
+
+          <div class="sm:col-span-3">
+            <label for="first-name" class="block text-sm/6 font-medium"
+              >Tipo de cuenta</label
+            >
+            <div class="mt-2">
+              <select
+                name="typeAccountId"
+                class="select select-bordered w-full"
+                (change)="onSelectedChange($event)"
+              >
+                <option>Seleccionar tipo de cuenta</option>
+                @for (item of typeAccountsResource.value()?.data; track item.id)
+                { @if(this.objInput()?.bankAccount?.typeAccount?.id === item.id ){
+                <option selected [value]="item.id">{{item.description}}</option>
+                }@else {
+                <option [value]="item.id">{{item.description}}</option>
+                } }
+              </select>
+              <!-- <p>Currently selected: {{ communeDescriptionSelected() }}</p> -->
+            </div>
+            <!-- <form-error-label [control]="form.get('typeAccountId')!" /> -->
+          </div>
+
+          <div class="sm:col-span-3">
+            <label for="first-name" class="block text-sm/6 font-medium"
+              >Cuenta</label
+            >
+            <div class="mt-2">
+              <input
+                id="accountNumber"
+                type="text"
+                name="accountNumber"
+                placeholder="Cuenta"
+                [class.border-red-500]="form.get('accountNumber')?.errors ?? false"
+                class="input input-bordered w-full"
+                formControlName="accountNumber"
+                (change)="onInputChange($event)"
+              />
+            </div>
+            <!-- <form-error-label [control]="form.get('accountNumber')!" /> -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Abajo full anchura - Contactos-->
+  <div class="flex flex-col gap-2 border-t border-gray-300 pr-4">
+    <div class="border-b border-gray-900/10 pb-12">
+      <div class="mt-14 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+        <div class="sm:col-span-6">
+          <details class="collapse collapse-arrow bg-base-200">
+            <summary class="collapse-title text-xl font-medium">
+              Contactos
+            </summary>
+            <div class="collapse-content">
+              <contacts-table
+                [contactsInput]="objInput().contacts?? []"
+                (contactsEvent)="onContactsChange($event)"
+              />
+            </div>
+          </details>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
+
+@if (wasSaved()) {
+<div class="alert alert-success fixed bottom-4 right-4 w-80 animate-fadeIn">
+  <span>Datos actualizados correctamente</span>
+</div>
+}

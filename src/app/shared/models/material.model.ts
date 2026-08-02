@@ -1,4 +1,3 @@
-import { ɵNullViewportScroller } from '@angular/common';
 import { Customer } from './customer.model';
 import { Provider } from './provider.model';
 

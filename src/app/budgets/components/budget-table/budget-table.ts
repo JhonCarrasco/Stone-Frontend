@@ -1,4 +1,4 @@
-import { CurrencyPipe, DatePipe } from '@angular/common';
+import { DatePipe } from '@angular/common';
 import { Component, input, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { Budget } from '@shared/models/budget.model';
@@ -6,7 +6,7 @@ import { getStateDescription, statesBudget } from 'src/app/constant/budgetData';
 
 @Component({
   selector: 'budget-table',
-  imports: [CurrencyPipe, RouterLink, DatePipe],
+  imports: [RouterLink, DatePipe],
   templateUrl: './budget-table.html',
 })
 export class BudgetTable {

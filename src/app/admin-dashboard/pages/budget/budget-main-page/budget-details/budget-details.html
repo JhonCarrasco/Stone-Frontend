@@ -3,7 +3,9 @@
 </h1>
 <div class="divider col-span-2"></div>
 @if(budget().id === null || budget().id === undefined || budget().id === 0) {
-<search-customer (customerEvent)="onSelectionCustomerChange($event)" />
+<div class="justify-center">
+  <search-customer (customerEvent)="onSelectionCustomerChange($event)" />
+</div>
 }
 
 <form [formGroup]="budgetForm" (ngSubmit)="onSubmit()">
