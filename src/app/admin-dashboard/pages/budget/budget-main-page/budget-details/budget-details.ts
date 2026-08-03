@@ -122,7 +122,7 @@ export class BudgetDetails implements OnInit {
 
   // event handler para actualizar itemizedProducts en budgetForm
   onItemizedProductsChange(event: ItemizedProduct[]) {
-    console.log('BudgetDetails.onItemizedProductsChange', event);
+    // console.log('BudgetDetails.onItemizedProductsChange', event);
     // actualizar itemizedProducts en budgetForm
     this.budgetForm.patchValue({
       itemizedProducts: event,
@@ -144,7 +144,7 @@ export class BudgetDetails implements OnInit {
 
   // event handler para actualizar itemizedServices en budgetForm
   onItemizedServicesChange(event: ItemizedService[]) {
-    console.log('BudgetDetails.onItemizedServicesChange', event);
+    // console.log('BudgetDetails.onItemizedServicesChange', event);
     // actualizar itemizedServices en budgetForm
     this.budgetForm.patchValue({
       itemizedServices: event,

@@ -268,7 +268,7 @@ export class DispatchDetails implements OnInit {
 
     // console.log('DispatchDetails.onSubmit.objInput', this.objInput());
     // console.log('DispatchDetails.onSubmit.formValue', formValue);
-    console.log('DispatchDetails.onSubmit.objLike', objLike);
+    // console.log('DispatchDetails.onSubmit.objLike', objLike);
 
     if (this.objInput().id == 0) {
       // Crear presupuesto

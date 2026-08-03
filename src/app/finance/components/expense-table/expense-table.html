@@ -1,0 +1,52 @@
+<div class="overflow-x-auto bg-gray-900 rounded-2xl p-4">
+  <table class="table">
+    <!-- head -->
+    <thead>
+      <tr>
+        <th>
+          <label>
+            <input type="checkbox" class="checkbox" />
+          </label>
+        </th>
+        <th>Id</th>
+        <th>Tipo Gasto</th>
+        <th>Valor</th>
+        <th>Fecha</th>
+        <th>Descripción</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- row 1 -->
+      @if(expenses() == null || expenses().length == 0) {
+      <tr>
+        <td colspan="8">
+          <div class="alert alert-info">
+            <span>No hay gastos disponibles</span>
+          </div>
+        </td>
+      </tr>
+      } @for (item of expenses(); track item.id) {
+      <tr>
+        <th>
+          <label>
+            <input type="checkbox" class="checkbox" />
+          </label>
+        </th>
+        <td>{{ item.id }}</td>
+        <td>{{ item.tipo }}</td>
+        <td>{{ item.value | currency }}</td>
+        <td>{{ item.fecha | date: 'dd/MM/yyyy' }}</td>
+
+        <th>
+          <a
+            [routerLink]="['/admin/finances/expenses', item.id]"
+            class="btn btn-ghost text-accent btn-xs"
+            >Detalles</a
+          >
+        </th>
+      </tr>
+      }
+    </tbody>
+  </table>
+</div>

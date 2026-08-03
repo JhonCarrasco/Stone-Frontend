@@ -148,7 +148,7 @@ export class ProviderDetails implements OnInit {
       accountNumber: formLike.bankAccount?.accountNumber,
     });
 
-    console.log('ProviderDetails.setFormValue.form', this.form.value);
+    // console.log('ProviderDetails.setFormValue.form', this.form.value);
   }
 
   ngOnInit(): void {
@@ -172,7 +172,7 @@ export class ProviderDetails implements OnInit {
 
     // console.log('ProviderDetails.onSubmit.objInput', this.objInput());
     // console.log('ProviderDetails.onSubmit.formValue', formValue);
-    console.log('ProviderDetails.onSubmit.objLike', objLike);
+    // console.log('ProviderDetails.onSubmit.objLike', objLike);
 
     if (this.objInput().id == 0) {
       // Crear presupuesto
