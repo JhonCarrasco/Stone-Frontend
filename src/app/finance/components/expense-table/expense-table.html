@@ -34,9 +34,9 @@
           </label>
         </th>
         <td>{{ item.id }}</td>
-        <td>{{ item.tipo }}</td>
-        <td>{{ item.value | currency }}</td>
-        <td>{{ item.fecha | date: 'dd/MM/yyyy' }}</td>
+        <td>{{ this.expenseTypeDescription(item.expenseTypeId) }}</td>
+        <td>{{ item.amount | currency }}</td>
+        <td>{{ item.expenseDate | date: 'dd/MM/yyyy' }}</td>
 
         <th>
           <a

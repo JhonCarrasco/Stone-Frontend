@@ -1,17 +1,8 @@
-<!-- @if (expensesResource.isLoading()) {
+@if (expensesResource.isLoading()) {
 <div class="flex justify-center items-center h-screen">
   <span class="loading loading-spinner loading-lg"></span>
 </div>
 } @if (expensesResource.hasValue() && expensesResource.value()?.data != null) {
 
 <expense-details [objInput]="expensesResource.value()?.data!"></expense-details>
-} -->
-
-@if (this.expensesResource().data.length == 0) {
-<div class="flex justify-center items-center h-screen">
-  <span class="loading loading-spinner loading-lg"></span>
-</div>
-} @if (this.expensesResource().data.length > 0) {
-<!-- Expense -->
-<expense-details [objInput]="this.expensesResource().data[0]"></expense-details>
 }

@@ -1,1 +1,388 @@
-<p>expense-details works!</p>,
+<h1 class="text-2xl font-bold">
+  Gastos {{ objInput().id ? objInput().id : 'Nuevo' }}
+</h1>
+<div class="divider col-span-2"></div>
+
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <div class="grid grid-cols-2 gap-2">
+    <!--GUARDAR-->
+    <div class="col-span-2">
+      <div class="flex justify-end h-12">
+        <button class="btn btn-secondary" type="submit">
+          <!-- <span class="loading loading-spinner loading-sm"></span> -->
+          Guardar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-2 gap-2 border-t border-b border-gray-300 pr-4">
+    <!-- Left Side -->
+    <div class="flex flex-col gap-2 border-r border-gray-300 pr-4">
+      <div class="border-b border-gray-900/10">
+        <h2 class="text-lg font-bold">Gasto</h2>
+      </div>
+    </div>
+
+    <!-- Right Side -->
+    <div class="flex flex-col gap-2">
+      <div class="border-b border-gray-900/10">
+        <h2 class="text-lg font-bold">Proyecto/Presupuesto</h2>
+      </div>
+    </div>
+  </div>
+
+  <!-- full informacion -->
+  <div class="grid grid-cols-2 gap-2 border-t border-b border-gray-300 pr-4">
+    <!-- Left Side -->
+    <div class="flex flex-col gap-2 border-r border-gray-300 pr-4">
+      <div class="border-b border-gray-900/10 pb-12">
+        <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+          <div class="sm:col-span-1">
+            <label for="first-name" class="block text-sm/6 font-medium"
+              >N°</label
+            >
+            <div class="mt-3">
+              <input
+                readonly
+                id="id"
+                type="text"
+                name="id"
+                placeholder="N°"
+                [class.border-red-500]="form.get('id')?.errors ?? false"
+                class="input input-bordered w-full bg-neutral"
+                formControlName="id"
+                (change)="onInputChange($event)"
+              />
+            </div>
+            <form-error-label [control]="form.get('id')!" />
+          </div>
+
+          <div class="sm:col-span-4">
+            <label for="first-name" class="block text-sm/6 font-medium"
+              >Tipo de Gasto</label
+            >
+            <div class="mt-3">
+              <select
+                name="expenseTypeId"
+                class="select select-bordered w-full"
+                (change)="onSelectedChange($event)"
+              >
+                <option>Seleccionar tipo de gasto</option>
+                @for (item of expenseType(); track item.id) {
+                @if(this.objInput().expenseTypeId === item.id ){
+                <option selected [value]="item.id">{{item.description}}</option>
+                }@else {
+                <option [value]="item.id">{{item.description}}</option>
+                } }
+              </select>
+            </div>
+            <form-error-label [control]="form.get('expenseTypeId')!" />
+          </div>
+
+          <div class="sm:col-span-6">
+            <label for="first-name" class="block text-sm/6 font-medium"
+              >{{this.objInput().expenseTypeId !== 1 ? 'Trabajador' :
+              'Conductor'}}</label
+            >
+            <div class="mt-2">
+              <input
+                id="employee"
+                type="text"
+                name="employee"
+                placeholder=""
+                [class.border-red-500]="form.get('employee')?.errors ?? false"
+                class="input input-bordered w-full"
+                formControlName="employee"
+                (change)="onInputChange($event)"
+              />
+            </div>
+            <form-error-label [control]="form.get('employee')!" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Side -->
+    <div class="flex flex-col gap-2">
+      <div class="border-b border-gray-900/10 pb-12">
+        <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+          <div class="sm:col-span-6">
+            <search-budget
+              (budgetEvent)="onSearchBudgetChange($event)"
+              [withDatalist]="true"
+              [budgetsFound]="budgetsResource.value()?.data ?? []"
+            />
+          </div>
+
+          <div class="sm:col-span-4 ml-4">
+            <label for="first-name" class="block text-sm/6 font-medium"
+              >Proyecto/Presupuesto</label
+            >
+            <div class="mt-2">
+              <input
+                id="project"
+                type="text"
+                name="project"
+                placeholder=""
+                [class.border-red-500]="form.get('project')?.errors ?? false"
+                class="input input-bordered w-full"
+                formControlName="project"
+                (change)="onInputChange($event)"
+              />
+            </div>
+            <form-error-label [control]="form.get('project')!" />
+          </div>
+          @if(this.form.get('budgetId')?.value != null){
+          <div class="sm:col-span-2">
+            <label for="first-name" class="block text-sm/6 font-medium"
+              >N°</label
+            >
+            <div class="mt-2">
+              <input
+                readonly
+                id="budgetId"
+                type="number"
+                name="budgetId"
+                placeholder="N° Presupuesto"
+                [class.border-red-500]="form.get('budgetId')?.errors ?? false"
+                class="input input-bordered w-full bg-neutral"
+                formControlName="budgetId"
+                (change)="onInputChange($event)"
+              />
+            </div>
+            <form-error-label [control]="form.get('budgetId')!" />
+          </div>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-2 gap-2 border-t border-b border-gray-300 pr-4">
+    <!-- Left Side -->
+    <div class="flex flex-col gap-2 border-r border-gray-300 pr-4">
+      <div class="border-b border-gray-900/10">
+        <h2 class="text-lg font-bold">Pago</h2>
+      </div>
+    </div>
+
+    <!-- Right Side -->
+    <div class="flex flex-col gap-2">
+      <div class="border-b border-gray-900/10">
+        <h2 class="text-lg font-bold">Detalle</h2>
+      </div>
+    </div>
+  </div>
+  <!-- full informacion -->
+  <div class="grid grid-cols-2 gap-2 border-t border-b border-gray-300 pr-4">
+    <!-- Left Side -->
+    <div class="flex flex-col gap-2 border-r border-gray-300 pr-4">
+      <div class="border-b border-gray-900/10 pb-12">
+        <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+          <div class="sm:col-span-6">
+            <label for="first-name" class="block text-sm/6 font-medium"
+              >Fecha gasto</label
+            >
+            <div class="mt-2">
+              <calendar-datepicker
+                [dateInput]="objInput().expenseDate!"
+                (guideDateEvent)="onExpenseDateChange($event)"
+              />
+            </div>
+            <form-error-label [control]="form.get('expenseDate')!" />
+          </div>
+
+          <div class="sm:col-span-3">
+            <label for="first-name" class="block text-sm/6 font-medium"
+              >Forma de pago</label
+            >
+            <div class="mt-3">
+              <select
+                name="methodPaymentId"
+                class="select select-bordered w-full"
+                (change)="onSelectedChange($event)"
+              >
+                <option>Seleccionar forma de pago</option>
+                @for (item of methodPayment(); track item.id) {
+                @if(this.objInput().methodPaymentId === item.id ){
+                <option selected [value]="item.id">{{item.description}}</option>
+                }@else {
+                <option [value]="item.id">{{item.description}}</option>
+                } }
+              </select>
+            </div>
+            <form-error-label [control]="form.get('methodPaymentId')!" />
+          </div>
+
+          <div class="sm:col-span-3">
+            <label for="first-name" class="block text-sm/6 font-medium"
+              >Tipo comprobante de pago</label
+            >
+            <div class="mt-3">
+              <select
+                name="paymentReceiptId"
+                class="select select-bordered w-full"
+                (change)="onSelectedChange($event)"
+              >
+                <option>Seleccionar tipo de comprobante</option>
+                @for (item of paymentReceipt(); track item.id) {
+                @if(this.objInput().paymentReceiptId === item.id ){
+                <option selected [value]="item.id">{{item.description}}</option>
+                }@else {
+                <option [value]="item.id">{{item.description}}</option>
+                } }
+              </select>
+            </div>
+            <form-error-label [control]="form.get('paymentReceiptId')!" />
+          </div>
+
+          <div class="sm:col-span-3">
+            <label for="first-name" class="block text-sm/6 font-medium"
+              >N°Boleta/Factura</label
+            >
+            <div class="mt-2">
+              <input
+                id="billNumber"
+                type="text"
+                name="billNumber"
+                placeholder=""
+                [class.border-red-500]="form.get('billNumber')?.errors ?? false"
+                class="input input-bordered w-full"
+                formControlName="billNumber"
+                (change)="onInputChange($event)"
+              />
+            </div>
+            <form-error-label [control]="form.get('billNumber')!" />
+          </div>
+
+          <div class="sm:col-span-3">
+            <label for="first-name" class="block text-sm/6 font-medium"
+              >Monto ($)</label
+            >
+            <div class="mt-2">
+              <input
+                id="amount"
+                type="number"
+                name="amount"
+                placeholder=""
+                [class.border-red-500]="form.get('amount')?.errors ?? false"
+                class="input input-bordered w-full"
+                formControlName="amount"
+                (change)="onInputChange($event)"
+              />
+            </div>
+            <form-error-label [control]="form.get('amount')!" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Side -->
+    <div class="flex flex-col gap-2">
+      <div class="border-b border-gray-900/10 pb-12">
+        <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+          @if(this.objInput().expenseTypeId === 1){
+          <div class="sm:col-span-3">
+            <label for="first-name" class="block text-sm/6 font-medium"
+              >Vehículo</label
+            >
+            <div class="mt-2">
+              <input
+                id="vehicle"
+                type="text"
+                name="vehicle"
+                placeholder=""
+                [class.border-red-500]="form.get('vehicle')?.errors ?? false"
+                class="input input-bordered w-full"
+                formControlName="vehicle"
+                (change)="onInputChange($event)"
+              />
+            </div>
+            <form-error-label [control]="form.get('vehicle')!" />
+          </div>
+          <div class="sm:col-span-3">
+            <label for="first-name" class="block text-sm/6 font-medium"
+              >Patente</label
+            >
+            <div class="mt-2">
+              <input
+                id="registration"
+                type="text"
+                name="registration"
+                placeholder=""
+                [class.border-red-500]="form.get('registration')?.errors ?? false"
+                class="input input-bordered w-full"
+                formControlName="registration"
+                (change)="onInputChange($event)"
+              />
+            </div>
+            <form-error-label [control]="form.get('registration')!" />
+          </div>
+          <div class="sm:col-span-3">
+            <label for="first-name" class="block text-sm/6 font-medium"
+              >Destino</label
+            >
+            <div class="mt-2">
+              <input
+                id="description"
+                type="text"
+                name="description"
+                placeholder=""
+                [class.border-red-500]="form.get('description')?.errors ?? false"
+                class="input input-bordered w-full"
+                formControlName="description"
+                (change)="onInputChange($event)"
+              />
+            </div>
+            <form-error-label [control]="form.get('description')!" />
+          </div>
+          } @else {
+          <div class="sm:col-span-6">
+            <label for="first-name" class="block text-sm/6 font-medium"
+              >Descripción</label
+            >
+            <div class="mt-2">
+              <input
+                id="description"
+                type="text"
+                name="description"
+                placeholder=""
+                [class.border-red-500]="form.get('description')?.errors ?? false"
+                class="input input-bordered w-full"
+                formControlName="description"
+                (change)="onInputChange($event)"
+              />
+            </div>
+            <form-error-label [control]="form.get('description')!" />
+          </div>
+          <div class="sm:col-span-3">
+            <label for="first-name" class="block text-sm/6 font-medium"
+              >Ubicación</label
+            >
+            <div class="mt-2">
+              <input
+                id="location"
+                type="text"
+                name="location"
+                placeholder="ubicación"
+                [class.border-red-500]="form.get('location')?.errors ?? false"
+                class="input input-bordered w-full"
+                formControlName="location"
+                (change)="onInputChange($event)"
+              />
+            </div>
+            <form-error-label [control]="form.get('location')!" />
+          </div>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
+
+@if (wasSaved()) {
+<div class="alert alert-success fixed bottom-4 right-4 w-80 animate-fadeIn">
+  <span>Datos actualizados correctamente</span>
+</div>
+}

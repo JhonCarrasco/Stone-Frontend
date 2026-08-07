@@ -6,12 +6,8 @@
 <div class="divider"></div>
 
 <div class="flex gap-2 items-center h-20">
-  <!-- <app-pagination
-    [pages]="expensesResource.value()?.pages ?? 0"
-    [currentPage]="paginationService.currentPage()"
-  /> -->
   <app-pagination
-    [pages]="expensesResource().pages"
+    [pages]="expensesResource.value()?.pages ?? 0"
     [currentPage]="paginationService.currentPage()"
   />
 
@@ -35,5 +31,4 @@
   </button>
 </div>
 
-<!-- <expense-table [expenses]="expensesResource.value()?.data ?? []" /> -->
-<expense-table [expenses]="this.expensesResource().data" />
+<expense-table [expenses]="expensesResource.value()?.data ?? []" />
