@@ -15,6 +15,8 @@ import { CustomersMainPage } from './pages/maintenance/customers-main-page/custo
 import { CustomerMainPage } from './pages/maintenance/customer-main-page/customer-main-page';
 import { ProvidersMainPage } from './pages/maintenance/providers-main-page/providers-main-page';
 import { ProviderMainPage } from './pages/maintenance/provider-main-page/provider-main-page';
+import { ExpensesPage } from './pages/finance/expenses-page/expenses-page';
+import { ExpensePage } from './pages/finance/expense-page/expense-page';
 
 export const adminDashboardRoutes: Routes = [
   {
@@ -24,7 +26,7 @@ export const adminDashboardRoutes: Routes = [
     children: [
       {
         path: '',
-        component: ProvidersMainPage,
+        component: BudgetsMainPage,
       },
       {
         path: 'products',
@@ -82,6 +84,14 @@ export const adminDashboardRoutes: Routes = [
       {
         path: 'materials/voucher/:id',
         component: MaterialVoucherPage,
+      },
+      {
+        path: 'finances/expenses',
+        component: ExpensesPage,
+      },
+      {
+        path: 'finances/expenses/:id',
+        component: ExpensePage,
       },
       {
         path: '**',

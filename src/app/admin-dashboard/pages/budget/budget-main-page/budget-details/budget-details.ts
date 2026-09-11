@@ -28,6 +28,7 @@ import {
 import { CustomerService } from 'src/app/services/customer.service';
 import { getZoneDescription, zoneList } from 'src/app/constant/zoneData';
 import { environment } from 'src/environments/environment';
+import { CalendarDatepicker } from '@shared/components/calendar-datepicker/calendar-datepicker';
 
 const taxRate = environment.taxRate;
 
@@ -39,6 +40,7 @@ const taxRate = environment.taxRate;
     SearchCustomer,
     ItemizedProductTable,
     ItemizedServiceTable,
+    CalendarDatepicker,
   ],
   templateUrl: './budget-details.html',
 })
@@ -86,6 +88,12 @@ export class BudgetDetails implements OnInit {
     itemizedServices: [[] as ItemizedService[]],
   });
 
+  onCreateAtChange(event: Date) {
+    this.budgetForm.patchValue({
+      createAt: event,
+    });
+  }
+
   onInputBudgetDetailChange(event: Event) {
     const { value, name } = event.target as HTMLSelectElement;
     this.budgetForm.patchValue({ [name]: value });
@@ -114,7 +122,7 @@ export class BudgetDetails implements OnInit {
     if (!event) return;
     this.budgetForm.patchValue({
       customerId: event.id,
-      displayName: event.displayName,
+      displayName: event.person.displayName,
       email: event.email,
       phone: event.phone,
     });
@@ -122,7 +130,7 @@ export class BudgetDetails implements OnInit {
 
   // event handler para actualizar itemizedProducts en budgetForm
   onItemizedProductsChange(event: ItemizedProduct[]) {
-    console.log('BudgetDetails.onItemizedProductsChange', event);
+    // console.log('BudgetDetails.onItemizedProductsChange', event);
     // actualizar itemizedProducts en budgetForm
     this.budgetForm.patchValue({
       itemizedProducts: event,
@@ -144,7 +152,7 @@ export class BudgetDetails implements OnInit {
 
   // event handler para actualizar itemizedServices en budgetForm
   onItemizedServicesChange(event: ItemizedService[]) {
-    console.log('BudgetDetails.onItemizedServicesChange', event);
+    // console.log('BudgetDetails.onItemizedServicesChange', event);
     // actualizar itemizedServices en budgetForm
     this.budgetForm.patchValue({
       itemizedServices: event,
@@ -212,33 +220,33 @@ export class BudgetDetails implements OnInit {
 
     // console.log('BudgetDetails.onSubmit.budgetInput', this.budget());
     // console.log('BudgetDetails.onSubmit.budgetForm', formValue);
-    // console.log('BudgetDetails.onSubmit.budgetLike', budgetLike);
+    console.log('BudgetDetails.onSubmit.budgetLike', budgetLike);
 
-    if (this.budget().id == 0) {
-      // Crear presupuesto
-      const response = await firstValueFrom(
-        this.budgetService.createBudget(budgetLike /* , this.imageFileList */),
-      );
+    // if (this.budget().id == 0) {
+    //   // Crear presupuesto
+    //   const response = await firstValueFrom(
+    //     this.budgetService.createBudget(budgetLike /* , this.imageFileList */),
+    //   );
 
-      this.router.navigate(['/admin/budgets', response.data]);
-    } else {
-      const customerObject = await firstValueFrom(
-        this.customerService.getCustomerById(
-          this.budget().customer.person.id.toString(),
-        ),
-      );
+    //   this.router.navigate(['/admin/budgets', response.data]);
+    // } else {
+    //   const customerObject = await firstValueFrom(
+    //     this.customerService.getCustomerById(
+    //       this.budget().customer.person.id.toString(),
+    //     ),
+    //   );
 
-      if (customerObject.data.id !== budgetLike.customerId) return;
+    //   if (customerObject.data.id !== budgetLike.customerId) return;
 
-      budgetLike.customer = customerObject.data;
-      await firstValueFrom(
-        this.budgetService.updateBudget(
-          this.budget().id.toString(),
-          budgetLike,
-          /* this.imageFileList */
-        ),
-      );
-    }
+    //   budgetLike.customer = customerObject.data;
+    //   await firstValueFrom(
+    //     this.budgetService.updateBudget(
+    //       this.budget().id.toString(),
+    //       budgetLike,
+    //       /* this.imageFileList */
+    //     ),
+    //   );
+    // }
 
     this.wasSaved.set(true);
     setTimeout(() => {

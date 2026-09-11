@@ -8,14 +8,14 @@
             <input type="checkbox" class="checkbox" />
           </label>
         </th>
-        <th>id</th>
-        <th>description</th>
-        <th>Dimensiones (calculada)</th>
+        <th>Código</th>
+        <th>Descripción</th>
+        <th>Dimensiones</th>
         <th>color</th>
-        <th>unitMeasurement</th>
-        <th>manufacturer</th>
-        <th>category</th>
-        <th>provider</th>
+        <th>Unidad de medida</th>
+        <th>Fabricante</th>
+        <th>Categoría</th>
+        <th>Proveedor</th>
         <th></th>
       </tr>
     </thead>
@@ -50,14 +50,12 @@
             </div>
           </div>
         </td> -->
-          <td>
-            {{ product.id }}
-          </td>
+          <td>{{ product.productCode }}{{ product.id }}</td>
           <td>
             {{ product.description }}
           </td>
           <td>
-            {{ product.long | currency }}
+            {{ product.long }} x {{ product.width }} x {{ product.thickness }}
           </td>
           <td>
             {{ product.color }}

@@ -8,26 +8,25 @@
             <input type="checkbox" class="checkbox" />
           </label>
         </th>
-        <th>N°</th>
-        <th>Cliente</th>
-        <th>Proyecto</th>
+        <th>Id</th>
+        <th>Tipo Gasto</th>
+        <th>Valor</th>
+        <th>Fecha</th>
         <th>Descripción</th>
-        <th>Estado</th>
-        <th>Fecha Creación</th>
         <th></th>
       </tr>
     </thead>
     <tbody>
       <!-- row 1 -->
-      @if(budgets() == null || budgets().length == 0) {
+      @if(expenses() == null || expenses().length == 0) {
       <tr>
         <td colspan="8">
           <div class="alert alert-info">
-            <span>No hay presupuestos disponibles</span>
+            <span>No hay gastos disponibles</span>
           </div>
         </td>
       </tr>
-      } @for (item of budgets(); track item.id) {
+      } @for (item of expenses(); track item.id) {
       <tr>
         <th>
           <label>
@@ -35,14 +34,13 @@
           </label>
         </th>
         <td>{{ item.id }}</td>
-        <td>{{ item.customer.person.displayName }}</td>
-        <td>{{ item.projectName }}</td>
-        <td>{{ item.description }}</td>
-        <td>{{ onStateDescription(item.state) }}</td>
-        <td>{{ item.createAt | date: 'dd/MM/yyyy'}}</td>
+        <td>{{ this.expenseTypeDescription(item.expenseTypeId) }}</td>
+        <td>{{ item.amount | currency }}</td>
+        <td>{{ item.expenseDate | date: 'dd/MM/yyyy' }}</td>
+
         <th>
           <a
-            [routerLink]="['/admin/budgets', item.id]"
+            [routerLink]="['/admin/finances/expenses', item.id]"
             class="btn btn-ghost text-accent btn-xs"
             >Detalles</a
           >

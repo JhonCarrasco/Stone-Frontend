@@ -106,8 +106,16 @@
       <div class="flex flex-col gap-2">
         <form [formGroup]="itemizedMaterialForm">
           <div class="border-b border-gray-900/10 pb-12">
-            <h2 class="text-lg font-bold">Nuevo Item Material</h2>
+            <h2 class="text-lg font-bold">Nuevo Item Material(Producto)</h2>
             <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+              <div class="sm:col-span-6">
+                <search-product
+                  (productEvent)="onSearchProductChange($event)"
+                  [withDatalist]="true"
+                  [productsFound]="productsResource.value()?.data ?? []"
+                />
+              </div>
+
               <div class="sm:col-span-6">
                 <label for="first-name" class="block text-sm/6 font-medium"
                   >Código</label
@@ -233,7 +241,3 @@
     </div>
   </div>
 </dialog>
-
-<!-- <div class="sm:col-span-6">
-              <search-product (productEvent)="onProductSelected($event)" />
-            </div> -->

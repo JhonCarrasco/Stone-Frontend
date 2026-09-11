@@ -4,6 +4,8 @@ export const documentType = [
   { id: 3, type: 2, description: 'GUIA DE DESPACHO', code: 'DP' },
   { id: 4, type: 2, description: 'GUIA DE DEVOLUCION', code: 'DV' },
   { id: 5, type: 3, description: 'VALE DE CONSUMO', code: 'VC' },
+  { id: 6, type: 1, description: 'CONSIGNACIÓN', code: 'RC' },
+  { id: 7, type: 2, description: 'CONSIGNACIÓN', code: 'DC' },
 ];
 
 export const getDocumentTypeDescription = (id: number | null): string => {

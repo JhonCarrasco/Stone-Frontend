@@ -1,3 +1,4 @@
+import { ɵNullViewportScroller } from '@angular/common';
 import {
   Component,
   computed,
@@ -8,13 +9,17 @@ import {
   Output,
   signal,
 } from '@angular/core';
+import { rxResource } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { FormErrorLabelComponent } from '@shared/components/form-error-label/form-error-label.component';
+import { SearchProduct } from '@shared/components/search-product/search-product';
 import { ItemizedProduct } from '@shared/models/budget.model';
+import { ProductsService } from 'src/app/services/products.service';
 
 @Component({
   selector: 'itemized-product-table',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, SearchProduct, FormErrorLabelComponent],
   templateUrl: './itemizedProduct-table.html',
 })
 export class ItemizedProductTable implements OnInit {
@@ -24,23 +29,74 @@ export class ItemizedProductTable implements OnInit {
   router = inject(Router);
   fb = inject(FormBuilder);
   total = computed(() => this.itemizedProductForm.value.totalValue ?? 0);
+  productService = inject(ProductsService);
+  searchProductText = signal('');
 
   itemizedProductForm = this.fb.group({
     id: [0],
     active: [true],
     createAt: [null as Date | null],
     updatedAt: [null as Date | null],
-    description: ['', [Validators.required]],
+    description: [null as unknown as string, [Validators.required]],
     long: [0],
     width: [0],
     thickness: [0],
-    color: [''],
-    material: [''],
+    color: [null as unknown as string],
+    material: [null as unknown as string, [Validators.required]],
     unitValue: [0],
     amount: [0],
     totalValue: [0],
     budgetId: [0],
+    productId: [0],
+    unitMeasurement: [null as string | null],
+    height: [0],
   });
+
+  productsResource = rxResource({
+    request: () => ({
+      searchText: this.searchProductText(),
+      page: 0,
+      limit: 100,
+    }),
+    loader: ({ request }) => {
+      return this.productService.getProducts({
+        searchText: request.searchText,
+        offset: request.page,
+        limit: request.limit,
+      });
+    },
+  });
+
+  onSearchProductChange(event: string) {
+    // console.log('ItemizedMaterialTable.onSearchProductChange', event);
+    this.searchProductText.set(event);
+    const searchSplit = event.split('-');
+    const findText = searchSplit.length > 1 ? searchSplit[1] : searchSplit[0];
+    const productData$ = this.productService.getProducts({
+      offset: 0,
+      limit: 100,
+      searchText: findText,
+    });
+
+    // console.log('ItemizedMaterialTable.onSearchProductChange.EVENT', event);
+
+    productData$.subscribe((response) => {
+      this.productsResource.set(response);
+      // console.log('ItemizedMaterialTable.onSearchProductChange.RESPONSE', response);
+      if (response.data.length === 1) {
+        // console.log('productData.RESPONSE', response.data);
+        const item = response.data.find(
+          (elem) =>
+            elem.description === findText || elem.productCode === findText,
+        );
+        this.itemizedProductForm.patchValue({
+          productId: item?.id,
+          material: item?.description,
+          color: item?.color ?? null,
+        });
+      }
+    });
+  }
 
   onRemoveItemizedProduct(item: ItemizedProduct) {
     const updatedItems = this.itemizedProducts().map((i) =>

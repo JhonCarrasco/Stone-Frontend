@@ -27,8 +27,6 @@ export class SearchBudget {
   onSelectionSearchBudgetChange(event: Event) {
     const value = (event.target as HTMLSelectElement).value;
     this.searchBudgetText.set(value);
-    // console.log('SearchBudget.onSelectionSearchBudgetChange.value', value);
-    //TODO: retornar valor projectName para asignarlo al input projectTo
     this.budgetEvent.emit(this.searchBudgetText());
   }
 }

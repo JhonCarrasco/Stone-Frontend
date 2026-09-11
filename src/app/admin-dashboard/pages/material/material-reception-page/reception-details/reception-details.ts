@@ -238,7 +238,7 @@ export class ReceptionDetails implements OnInit {
 
     // console.log('ReceptionDetails.onSubmit.objInput', this.objInput());
     // console.log('ReceptionDetails.onSubmit.formValue', formValue);
-    console.log('ReceptionDetails.onSubmit.objLike', objLike);
+    // console.log('ReceptionDetails.onSubmit.objLike', objLike);
 
     if (this.objInput().id == 0) {
       // Crear presupuesto
