@@ -22,15 +22,16 @@
     <!-- Datos generales -->
     <h2 class="text-lg font-bold">Datos generales</h2>
 
-    <label for="long" class="block text-sm/6 font-medium">Código</label>
+    <label for="long" class="block text-sm/6 font-medium">Código/Prefijo</label>
     <input
+      name="productCode"
       type="text"
-      placeholder="Código"
+      placeholder="Prefijo"
       class="input input-bordered w-full"
       formControlName="productCode"
       [class.border-red-500]="productForm.get('productCode')?.errors ?? false"
     />
-    <form-error-label [control]="productForm.get('productCode')!" />
+    <!-- <form-error-label [control]="productForm.get('productCode')!" /> -->
 
     <label for="long" class="block text-sm/6 font-medium">Descripción</label>
     <input
@@ -67,7 +68,7 @@
         <option [value]="item.description" [tabIndex]="item.id"></option>
       }
     </datalist>
-    <form-error-label [control]="productForm.get('manufacturerName')!" />
+    <!-- <form-error-label [control]="productForm.get('manufacturerName')!" /> -->
     <!-- @if (
       productForm.get("manufacturerName")?.invalid &&
       (productForm.get("manufacturerName")?.dirty ||
@@ -229,7 +230,9 @@
     >
       <option disabled selected>Seleccionar un proveedor</option>
       @for (item of providersResource.value()?.data; track item.id) {
-        <option [value]="item.displayName" [tabIndex]="item.id"></option>
+        <option [tabIndex]="item.person.id">
+          {{ item.person.rut }} , {{ item.person.displayName }}
+        </option>
       }
     </datalist>
     <!-- <form-error-label [control]="productForm.get('providerName')!" /> -->

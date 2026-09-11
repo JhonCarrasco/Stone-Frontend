@@ -106,18 +106,12 @@
 
           <div class="sm:col-span-3">
             <label for="first-name" class="block text-sm/6 font-medium"
-              >Fecha Creaci&oacute;n</label
+              >Fecha</label
             >
             <div class="mt-2">
-              <input
-                id="createAt"
-                type="text"
-                name="createAt"
-                placeholder="Fecha de Creación"
-                [class.border-red-500]="budgetForm.get('createAt')?.errors ?? false"
-                class="input input-bordered w-full"
-                formControlName="createAt"
-                (change)="onInputBudgetDetailChange($event)"
+              <calendar-datepicker
+                [dateInput]="budget().createAt"
+                (guideDateEvent)="onCreateAtChange($event)"
               />
             </div>
             <form-error-label [control]="budgetForm.get('createAt')!" />

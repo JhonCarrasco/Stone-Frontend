@@ -42,8 +42,8 @@ export class ProductDetailsComponent implements OnInit {
     active: [true],
     createAt: [null as Date | null],
     updatedAt: [null as Date | null],
-    productCode: ['', Validators.required],
-    description: ['', Validators.required],
+    productCode: [''],
+    description: ['', [Validators.required]],
     long: [0, [Validators.required, Validators.min(0)]],
     width: [0, [Validators.required, Validators.min(0)]],
     thickness: [0, [Validators.required, Validators.min(0)]],
@@ -52,14 +52,14 @@ export class ProductDetailsComponent implements OnInit {
     unitValue: [0, [Validators.required, Validators.min(0)]],
     manufacturerName: [
       '',
-      [
-        Validators.required,
-        // existsInListValidator(
-        //   this.sharedService,
-        //   'shareds/Manufacturers',
-        //   this.product().id,
-        // ),
-      ],
+      // [
+      //   Validators.required,
+      //   // existsInListValidator(
+      //   //   this.sharedService,
+      //   //   'shareds/Manufacturers',
+      //   //   this.product().id,
+      //   // ),
+      // ],
     ],
     categoryName: [null as string | null],
     providerName: [null as string | null],
@@ -71,14 +71,16 @@ export class ProductDetailsComponent implements OnInit {
   providersResource = rxResource({
     request: () => ({
       page: 0,
-      limit: 0,
-      searchText: 'providers',
+      limit: 200,
+      searchText: '',
+      uri: 'providers',
     }),
     loader: ({ request }) => {
       return this.providersService.getProviders({
         limit: request.limit,
         offset: 0,
-        searchText: 'providers',
+        searchText: request.searchText,
+        uri: request.uri,
       });
     },
   });
@@ -87,13 +89,15 @@ export class ProductDetailsComponent implements OnInit {
     request: () => ({
       page: 0,
       limit: 0,
-      searchText: 'Categories',
+      searchText: '',
+      uri: 'shareds/categories',
     }),
     loader: ({ request }) => {
       return this.sharedService.getShareds('shareds/categories', {
         limit: request.limit,
         offset: 0,
-        searchText: 'Categories',
+        searchText: request.searchText,
+        uri: request.uri,
       });
     },
   });
@@ -130,13 +134,15 @@ export class ProductDetailsComponent implements OnInit {
 
   onSelectionProviderChange(event: Event) {
     const value = (event.target as HTMLSelectElement).value;
+    const searchSplit = value.split(' , ');
+    const findText = searchSplit.length > 1 ? searchSplit[1] : searchSplit[0];
     const selectedOption = this.providersResource
       .value()
-      ?.data.find((option) => option.displayName === value);
+      ?.data.find((option) => option.person.displayName === findText);
 
     this.productForm.patchValue({
       providerId: !selectedOption ? null : selectedOption.id,
-      providerName: !selectedOption ? null : selectedOption.displayName,
+      providerName: !selectedOption ? null : selectedOption.person.displayName,
     });
   }
 
@@ -180,6 +186,9 @@ export class ProductDetailsComponent implements OnInit {
     this.productForm.reset(this.product() as Product);
     // this.productForm.patchValue({ tags: formLike.tags?.join(',') });
     // this.productForm.patchValue(formLike as any);
+    this.productForm.patchValue({
+      productCode: `${formLike.productCode || ''}${formLike.id || ''}`, //FIXME: Concatenar el código(crear prefijo) con el id del producto para que sea único
+    });
   }
 
   async onSubmit() {
@@ -192,6 +201,8 @@ export class ProductDetailsComponent implements OnInit {
     const productLike: Partial<Product> = {
       ...(formValue as Product),
     };
+
+    console.log('ProductDetails.onSubmit.productLike', productLike);
 
     if (this.product().id == 0) {
       // Crear producto

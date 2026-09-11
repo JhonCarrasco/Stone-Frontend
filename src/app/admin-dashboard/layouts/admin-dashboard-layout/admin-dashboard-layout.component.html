@@ -34,7 +34,7 @@
         </a>
       </div>
       <div id="nav" class="w-full px-6">
-        <ul class="menu bg-base-200 rounded-box w-56">
+        <ul class="menu bg-base-200 rounded-box w-full">
           <!-- Ventas -->
           <li>
             <details [open]="activeIdx === 0" (toggle)="onToggle(0, $event)">
@@ -90,7 +90,11 @@
           </li>
           <!-- Administración -->
           <li>
-            <details [open]="activeIdx === 1" (toggle)="onToggle(1, $event)">
+            <details
+              class="mt-6"
+              [open]="activeIdx === 1"
+              (toggle)="onToggle(1, $event)"
+            >
               <summary>
                 <span class="text-lg font-bold leading-5 text-white"
                   >Administración</span
@@ -198,7 +202,11 @@
           </li>
           <!-- Bodega -->
           <li>
-            <details [open]="activeIdx === 2" (toggle)="onToggle(2, $event)">
+            <details
+              class="mt-6"
+              [open]="activeIdx === 2"
+              (toggle)="onToggle(2, $event)"
+            >
               <summary>
                 <span class="text-lg font-bold leading-5 text-white"
                   >Bodega</span
@@ -306,7 +314,11 @@
           </li>
           <!-- Finanzas -->
           <li>
-            <details [open]="activeIdx === 3" (toggle)="onToggle(3, $event)">
+            <details
+              class="mt-6"
+              [open]="activeIdx === 3"
+              (toggle)="onToggle(3, $event)"
+            >
               <summary>
                 <span class="text-lg font-bold leading-5 text-white"
                   >Finanzas</span

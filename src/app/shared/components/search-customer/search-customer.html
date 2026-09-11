@@ -16,7 +16,7 @@
     >
       <option disabled selected>Seleccionar un cliente</option>
       @for (item of customersFound(); track item.id) {
-      <option [value]="item.displayName" [tabIndex]="item.id"></option>
+      <option [value]="item.person.displayName" [tabIndex]="item.id"></option>
       }
     </datalist>
   </div>

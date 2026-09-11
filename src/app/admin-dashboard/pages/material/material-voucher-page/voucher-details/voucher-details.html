@@ -102,12 +102,13 @@
             >
             <div class="mt-2">
               <input
+                readonly
                 id="projectTo"
                 type="text"
                 name="projectTo"
                 placeholder=""
                 [class.border-red-500]="form.get('projectTo')?.errors ?? false"
-                class="input input-bordered w-full"
+                class="input input-bordered w-full bg-neutral"
                 formControlName="projectTo"
                 (change)="onInputChange($event)"
               />
@@ -127,7 +128,7 @@
                 name="budgetId"
                 placeholder="N° Presupuesto"
                 [class.border-red-500]="form.get('budgetId')?.errors ?? false"
-                class="input input-bordered w-full"
+                class="input input-bordered w-full bg-neutral"
                 formControlName="budgetId"
                 (change)="onInputChange($event)"
               />

@@ -121,6 +121,17 @@
                     (change)="onInputTextChange($event)"
                   />
                 </div>
+                <form-error-label
+                  [control]="itemizedProductForm.get('description')!"
+                />
+              </div>
+
+              <div class="sm:col-span-6">
+                <search-product
+                  (productEvent)="onSearchProductChange($event)"
+                  [withDatalist]="true"
+                  [productsFound]="productsResource.value()?.data ?? []"
+                />
               </div>
 
               <div class="sm:col-span-6">
@@ -132,9 +143,29 @@
                     id="material"
                     type="text"
                     name="material"
-                    placeholder="Material"
+                    placeholder="Material/Producto"
                     class="input input-bordered w-full"
                     formControlName="material"
+                    (change)="onInputTextChange($event)"
+                  />
+                </div>
+                <form-error-label
+                  [control]="itemizedProductForm.get('material')!"
+                />
+              </div>
+
+              <div class="sm:col-span-2">
+                <label for="first-name" class="block text-sm/6 font-medium"
+                  >Unidad de medida</label
+                >
+                <div class="mt-2">
+                  <input
+                    id="unitMeasurement"
+                    type="text"
+                    name="unitMeasurement"
+                    placeholder="Unidad de medida"
+                    class="input input-bordered w-full"
+                    formControlName="unitMeasurement"
                     (change)="onInputTextChange($event)"
                   />
                 </div>
@@ -169,6 +200,23 @@
                     placeholder="Ancho"
                     class="input input-bordered w-full"
                     formControlName="width"
+                    (change)="onInputNumberChange($event)"
+                  />
+                </div>
+              </div>
+
+              <div class="sm:col-span-2">
+                <label for="first-name" class="block text-sm/6 font-medium"
+                  >Alto</label
+                >
+                <div class="mt-2">
+                  <input
+                    id="height"
+                    type="text"
+                    name="height"
+                    placeholder="Alto"
+                    class="input input-bordered w-full"
+                    formControlName="height"
                     (change)="onInputNumberChange($event)"
                   />
                 </div>
@@ -236,7 +284,7 @@
                     type="text"
                     name="totalValue"
                     placeholder="Total"
-                    class="input input-bordered w-full"
+                    class="input input-bordered w-full bg-neutral"
                     formControlName="totalValue"
                     [value]="total()"
                   />
@@ -262,7 +310,3 @@
     </div>
   </div>
 </dialog>
-
-<!-- <div class="sm:col-span-6">
-              <search-product (productEvent)="onProductSelected($event)" />
-            </div> -->

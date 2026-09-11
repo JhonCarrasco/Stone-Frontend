@@ -26,7 +26,7 @@ export const adminDashboardRoutes: Routes = [
     children: [
       {
         path: '',
-        component: ExpensesPage,
+        component: BudgetsMainPage,
       },
       {
         path: 'products',

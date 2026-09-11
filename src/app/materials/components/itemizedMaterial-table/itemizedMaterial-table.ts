@@ -8,13 +8,16 @@ import {
   Output,
   signal,
 } from '@angular/core';
+import { rxResource } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { SearchProduct } from '@shared/components/search-product/search-product';
 import { Material } from '@shared/models/material.model';
+import { ProductsService } from 'src/app/services/products.service';
 
 @Component({
   selector: 'itemized-material-table',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, SearchProduct],
   templateUrl: './itemizedMaterial-table.html',
 })
 export class ItemizedMaterialTable implements OnInit {
@@ -25,6 +28,8 @@ export class ItemizedMaterialTable implements OnInit {
   fb = inject(FormBuilder);
   total = computed(() => this.itemizedMaterialForm.value.totalValue ?? 0);
   isVoucher = input.required<boolean>();
+  productService = inject(ProductsService);
+  searchProductText = signal('');
 
   itemizedMaterialForm = this.fb.group({
     id: [0],
@@ -43,6 +48,53 @@ export class ItemizedMaterialTable implements OnInit {
     dispatchId: [null as number | null],
     guideDate: [null as Date | null],
   });
+
+  productsResource = rxResource({
+    request: () => ({
+      searchText: this.searchProductText(),
+      page: 0,
+      limit: 100,
+    }),
+    loader: ({ request }) => {
+      return this.productService.getProducts({
+        searchText: request.searchText,
+        offset: request.page,
+        limit: request.limit,
+      });
+    },
+  });
+
+  onSearchProductChange(event: string) {
+    // console.log('ItemizedMaterialTable.onSearchProductChange', event);
+    this.searchProductText.set(event);
+    const searchSplit = event.split('-');
+    const findText = searchSplit.length > 1 ? searchSplit[1] : searchSplit[0];
+    const productData$ = this.productService.getProducts({
+      offset: 0,
+      limit: 100,
+      searchText: findText,
+    });
+
+    // console.log('ItemizedMaterialTable.onSearchProductChange.EVENT', event);
+
+    productData$.subscribe((response) => {
+      this.productsResource.set(response);
+      // console.log('ItemizedMaterialTable.onSearchProductChange.RESPONSE', response);
+      if (response.data.length === 1) {
+        // console.log('productData.RESPONSE', response.data);
+        const item = response.data.find(
+          (elem) =>
+            elem.description === findText || elem.productCode === findText,
+        );
+        this.itemizedMaterialForm.patchValue({
+          productCode: item?.productCode,
+          productId: item?.id,
+          description: item?.description,
+          unitMeasurement: item?.unitMeasurement ?? null,
+        });
+      }
+    });
+  }
 
   onAddItemizedMaterial() {
     this.itemizedMaterialForm.patchValue({

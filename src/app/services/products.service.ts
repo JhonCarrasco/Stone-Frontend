@@ -67,7 +67,7 @@ export class ProductsService {
         },
       })
       .pipe(
-        tap((resp) => console.log('service.getProducts', resp)),
+        tap((resp) => console.log('service.getProducts', resp)), //FIXME: Remove this log
         // tap((resp) => this.productsCache.set(key, resp)),
       );
   }

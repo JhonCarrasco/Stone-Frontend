@@ -42,6 +42,9 @@ export interface ItemizedProduct {
   amount: number;
   totalValue: number;
   budgetId: number;
+  productId: number;
+  unitMeasurement: string | null;
+  height: number;
 }
 
 export interface ItemizedService {

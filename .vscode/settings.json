@@ -23,5 +23,6 @@
     "**/.qodo": true,
     ".qodo": true
   },
-  "explorerExclude.backup": {}
+  "explorerExclude.backup": {},
+  "explorerExcludeManager.backup": {}
 }

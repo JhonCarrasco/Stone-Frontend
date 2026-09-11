@@ -23,7 +23,11 @@
   </select>
 
   <div class="flex-1">
-    <search-product (productEvent)="onSearchProductChange($event)" />
+    <search-product
+      [withDatalist]="false"
+      [productsFound]="[]"
+      (productEvent)="onSearchProductChange($event)"
+    />
   </div>
 
   <button class="btn btn-primary" routerLink="/admin/products/new">

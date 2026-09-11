@@ -17,7 +17,7 @@ export class SearchCustomer {
     const value = (event.target as HTMLSelectElement).value;
     this.searchCustomerText.set(value);
     this.customerEvent.emit(
-      this.customersFound().find((c) => c.displayName === value)!,
+      this.customersFound().find((c) => c.person.displayName === value)!,
     );
   }
 
