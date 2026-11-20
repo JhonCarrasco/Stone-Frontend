@@ -20,7 +20,7 @@ import { SearchProduct } from '@shared/components/search-product/search-product'
 export class ProductsAdminPageComponent {
   productsService = inject(ProductsService);
   paginationService = inject(PaginationService);
-  productsPerPage = signal(10);
+  productsPerPage = signal(50);
   searchProductText = signal('');
 
   productsResource = rxResource({

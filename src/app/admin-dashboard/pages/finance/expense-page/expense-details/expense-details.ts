@@ -14,6 +14,9 @@ import { BudgetService } from 'src/app/services/budgetService';
 import { Expense } from '../../../../../shared/models/expense.model';
 import { FinanceService } from 'src/app/services/finance.service';
 import { firstValueFrom } from 'rxjs';
+import { InputFile } from '@shared/components/input-file/input-file';
+import { DriveService } from 'src/app/services/driveService';
+import { FileDrive } from '@shared/models/fileDrive.model';
 
 @Component({
   selector: 'expense-details',
@@ -22,6 +25,7 @@ import { firstValueFrom } from 'rxjs';
     FormErrorLabelComponent,
     CalendarDatepicker,
     SearchBudget,
+    InputFile,
   ],
   templateUrl: './expense-details.html',
 })
@@ -31,11 +35,13 @@ export class ExpenseDetails implements OnInit {
   fb = inject(FormBuilder);
   financeService = inject(FinanceService);
   budgetService = inject(BudgetService);
+  driveService = inject(DriveService);
   wasSaved = signal(false);
   searchBudgetText = signal('');
   expenseType = signal(expenseType);
   methodPayment = signal(methodPayment);
   paymentReceipt = signal(paymentReceipt);
+  fileList: File[] | undefined = undefined;
 
   form = this.fb.group({
     id: [0],
@@ -51,8 +57,8 @@ export class ExpenseDetails implements OnInit {
     methodPaymentId: [null as number | null],
     paymentReceiptId: [null as number | null],
     billNumber: [null as number | null],
-    file: [null as any],
-
+    files: [[] as (File | FileDrive)[]],
+    documentType: [0],
     description: [null as string | null],
 
     vehicle: [null as string | null],
@@ -75,6 +81,21 @@ export class ExpenseDetails implements OnInit {
       });
     },
   });
+
+  onRemoveFileEvent(fileName: string) {
+    // get file from objInput().files by name
+    const fileToRemove = this.objInput().files?.find(
+      (file) => file.fileName === fileName,
+    );
+
+    if (fileToRemove && fileToRemove.folderParentId && fileToRemove.fileId) {
+      this.driveService.deleteFilesByFileId(fileToRemove.fileId).subscribe();
+    }
+  }
+
+  onFilesEvent(event: File[]) {
+    this.fileList = event;
+  }
 
   onSelectedChange(event: Event) {
     const { name, value } = event.target as HTMLSelectElement;
@@ -124,17 +145,23 @@ export class ExpenseDetails implements OnInit {
   }
 
   setFormValue(formLike: Partial<Expense>) {
-    this.form.reset(this.objInput() as Expense);
+    this.form.reset({ ...this.objInput(), files: [] } as Expense);
     const { expenseDate } = this.objInput();
     const currentDate = expenseDate! ?? new Date();
     formLike = {
       ...formLike,
       expenseDate: currentDate,
+      documentType: 9, // default to RENDICIÓN DE GASTOS
     } as Partial<Expense>;
 
     this.objInput().expenseDate = currentDate;
 
     this.form.patchValue(formLike as any);
+
+    this.fileList = this.objInput().files?.map((file) => {
+      const blob = new Blob([file.fileId], { type: file.contentType });
+      return new File([blob], file.fileName, { type: file.contentType });
+    }) as File[];
   }
 
   ngOnInit() {
@@ -156,16 +183,13 @@ export class ExpenseDetails implements OnInit {
       budgetId: Number(formValue.budgetId),
     } as Partial<Expense>;
 
-    // console.log('ExpenseDetails.onSubmit.objInput', this.objInput());
-    // console.log('ExpenseDetails.onSubmit.formValue', formValue);
-    // console.log('ExpenseDetails.onSubmit.objLike', objLike);
-
     if (this.objInput().id == 0) {
       // Crear presupuesto
       const response = await firstValueFrom(
         this.financeService.createFinance(
           objLike,
-          'finances/expenses' /* , this.imageFileList */,
+          'finances/expenses',
+          this.fileList,
         ),
       );
 
@@ -174,14 +198,23 @@ export class ExpenseDetails implements OnInit {
       const expenseId = this.objInput().id?.toString();
       if (!expenseId) return;
 
-      await firstValueFrom(
+      const response = await firstValueFrom(
         this.financeService.updateFinance(
           expenseId,
           objLike,
           'finances/expenses',
-          /* this.imageFileList */
+          this.fileList,
         ),
       );
+
+      this.objInput().files = [
+        ...(this.objInput().files ?? []),
+        ...response.data,
+      ];
+
+      this.form.patchValue({
+        files: [...(this.form.value.files ?? []), ...response.data],
+      });
     }
 
     this.wasSaved.set(true);

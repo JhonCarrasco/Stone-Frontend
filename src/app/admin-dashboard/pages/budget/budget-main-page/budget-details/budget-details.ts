@@ -29,6 +29,9 @@ import { CustomerService } from 'src/app/services/customer.service';
 import { getZoneDescription, zoneList } from 'src/app/constant/zoneData';
 import { environment } from 'src/environments/environment';
 import { CalendarDatepicker } from '@shared/components/calendar-datepicker/calendar-datepicker';
+import { InputFile } from '@shared/components/input-file/input-file';
+import { FileDrive } from '@shared/models/fileDrive.model';
+import { DriveService } from 'src/app/services/driveService';
 
 const taxRate = environment.taxRate;
 
@@ -41,6 +44,7 @@ const taxRate = environment.taxRate;
     ItemizedProductTable,
     ItemizedServiceTable,
     CalendarDatepicker,
+    InputFile,
   ],
   templateUrl: './budget-details.html',
 })
@@ -51,6 +55,7 @@ export class BudgetDetails implements OnInit {
   budgetService = inject(BudgetService);
   sharedService = inject(SharedService);
   customerService = inject(CustomerService);
+  driveService = inject(DriveService);
   wasSaved = signal(false);
   statesBudget = signal(statesBudget);
   stateDescriptionSelected = signal('');
@@ -61,6 +66,7 @@ export class BudgetDetails implements OnInit {
   netoCost = computed(() => this.budget().neto ?? 0);
   taxRateCost = computed(() => this.budget().taxRate ?? Number(taxRate));
   taxRateCostTotal = signal(0);
+  fileList: File[] | undefined = undefined;
 
   budgetForm = this.fb.group({
     id: [0],
@@ -86,7 +92,24 @@ export class BudgetDetails implements OnInit {
     taxRateTotal: [0],
     itemizedProducts: [[] as ItemizedProduct[]],
     itemizedServices: [[] as ItemizedService[]],
+    files: [[] as (File | FileDrive)[]],
+    documentType: [0],
   });
+
+  onRemoveFileEvent(fileName: string) {
+    // get file from objInput().files by name
+    const fileToRemove = this.budget().files?.find(
+      (file) => file.fileName === fileName,
+    );
+
+    if (fileToRemove && fileToRemove.folderParentId && fileToRemove.fileId) {
+      this.driveService.deleteFilesByFileId(fileToRemove.fileId).subscribe();
+    }
+  }
+
+  onFilesEvent(event: File[]) {
+    this.fileList = event;
+  }
 
   onCreateAtChange(event: Date) {
     this.budgetForm.patchValue({
@@ -183,12 +206,24 @@ export class BudgetDetails implements OnInit {
   }
 
   setFormValue(formLike: Partial<Budget>) {
-    this.budgetForm.reset(this.budget() as Budget);
+    this.budgetForm.reset({ ...this.budget(), files: [] } as Budget);
+    formLike = {
+      ...formLike,
+      documentType: 8, // default to Presupuesto
+    } as Partial<Budget>;
     this.budgetForm.patchValue(formLike as any);
+
+    this.fileList = this.budget().files?.map((file) => {
+      const blob = new Blob([file.fileId], { type: file.contentType });
+      return new File([blob], file.fileName, { type: file.contentType });
+    }) as File[];
   }
 
   ngOnInit(): void {
-    this.setFormValue(this.budget());
+    this.setFormValue({
+      ...this.budget(),
+      state: this.budget().state ?? 1,
+    });
     this.stateDescriptionSelected.set(
       getStateDescription(this.budget().state ?? null),
     );
@@ -207,6 +242,15 @@ export class BudgetDetails implements OnInit {
     });
   }
 
+  avoidEnter(event: Event): void {
+    const target = event.target as HTMLElement;
+
+    // Si no proviene de un textarea, bloquea el envío
+    if (target.tagName !== 'TEXTAREA') {
+      event.preventDefault();
+    }
+  }
+
   async onSubmit() {
     const isValid = this.budgetForm.valid;
     this.budgetForm.markAllAsTouched();
@@ -218,35 +262,37 @@ export class BudgetDetails implements OnInit {
       ...(formValue as Budget),
     };
 
-    // console.log('BudgetDetails.onSubmit.budgetInput', this.budget());
-    // console.log('BudgetDetails.onSubmit.budgetForm', formValue);
-    console.log('BudgetDetails.onSubmit.budgetLike', budgetLike);
+    if (this.budget().id == 0) {
+      // Crear presupuesto
+      const response = await firstValueFrom(
+        this.budgetService.createBudget(budgetLike, this.fileList),
+      );
 
-    // if (this.budget().id == 0) {
-    //   // Crear presupuesto
-    //   const response = await firstValueFrom(
-    //     this.budgetService.createBudget(budgetLike /* , this.imageFileList */),
-    //   );
+      this.router.navigate(['/admin/budgets', response.data]);
+    } else {
+      const customerObject = await firstValueFrom(
+        this.customerService.getCustomerById(
+          this.budget().customerId.toString(),
+        ),
+      );
 
-    //   this.router.navigate(['/admin/budgets', response.data]);
-    // } else {
-    //   const customerObject = await firstValueFrom(
-    //     this.customerService.getCustomerById(
-    //       this.budget().customer.person.id.toString(),
-    //     ),
-    //   );
+      if (customerObject.data.id !== budgetLike.customerId) return;
 
-    //   if (customerObject.data.id !== budgetLike.customerId) return;
+      budgetLike.customer = customerObject.data;
+      const response = await firstValueFrom(
+        this.budgetService.updateBudget(
+          this.budget().id.toString(),
+          budgetLike,
+          this.fileList,
+        ),
+      );
 
-    //   budgetLike.customer = customerObject.data;
-    //   await firstValueFrom(
-    //     this.budgetService.updateBudget(
-    //       this.budget().id.toString(),
-    //       budgetLike,
-    //       /* this.imageFileList */
-    //     ),
-    //   );
-    // }
+      this.budget().files = [...(this.budget().files ?? []), ...response.data];
+
+      this.budgetForm.patchValue({
+        files: [...(this.budgetForm.value.files ?? []), ...response.data],
+      });
+    }
 
     this.wasSaved.set(true);
     setTimeout(() => {

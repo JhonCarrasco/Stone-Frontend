@@ -1,4 +1,5 @@
 import { Customer } from './customer.model';
+import { FileDrive } from './fileDrive.model';
 
 export interface Budget {
   id: number;
@@ -25,6 +26,8 @@ export interface Budget {
   taxRateTotal: number;
   itemizedProducts: ItemizedProduct[];
   itemizedServices: ItemizedService[];
+  files?: FileDrive[] | null;
+  documentType: number;
 }
 
 export interface ItemizedProduct {

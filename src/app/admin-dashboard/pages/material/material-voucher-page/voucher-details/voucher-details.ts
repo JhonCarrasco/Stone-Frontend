@@ -4,13 +4,20 @@ import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CalendarDatepicker } from '@shared/components/calendar-datepicker/calendar-datepicker';
 import { FormErrorLabelComponent } from '@shared/components/form-error-label/form-error-label.component';
+import { InputFile } from '@shared/components/input-file/input-file';
 import { SearchBudget } from '@shared/components/search-budget/search-budget';
 import { Customer } from '@shared/models/customer.model';
+import { FileDrive } from '@shared/models/fileDrive.model';
 import { Material, MaterialGuideGeneric } from '@shared/models/material.model';
 import { Provider } from '@shared/models/provider.model';
 import { firstValueFrom } from 'rxjs';
+import {
+  DocumentDriveType,
+  documentType,
+} from 'src/app/constant/documentTypeData';
 import { ItemizedMaterialTable } from 'src/app/materials/components/itemizedMaterial-table/itemizedMaterial-table';
 import { BudgetService } from 'src/app/services/budgetService';
+import { DriveService } from 'src/app/services/driveService';
 import { MaterialService } from 'src/app/services/materialService';
 
 @Component({
@@ -21,6 +28,7 @@ import { MaterialService } from 'src/app/services/materialService';
     ItemizedMaterialTable,
     CalendarDatepicker,
     SearchBudget,
+    InputFile,
   ],
   templateUrl: './voucher-details.html',
 })
@@ -30,37 +38,10 @@ export class VoucherDetails implements OnInit {
   fb = inject(FormBuilder);
   materialService = inject(MaterialService);
   budgetService = inject(BudgetService);
+  driveService = inject(DriveService);
   wasSaved = signal(false);
   searchBudgetText = signal('');
-
-  onSearchBudgetChange(event: string) {
-    this.searchBudgetText.set(event);
-    const searchSplit = event.split(' - ');
-    const findText = searchSplit.length > 1 ? searchSplit[1] : searchSplit[0];
-    const productData$ = this.budgetService.getBudgets({
-      offset: 0,
-      limit: 100,
-      searchText: findText,
-    });
-
-    // console.log('VoucherDetails.onSearchBudgetChange.EVENT', event);
-
-    productData$.subscribe((response) => {
-      this.budgetsResource.set(response);
-      // console.log('VoucherDetails.onSearchBudgetChange.RESPONSE', response);
-      if (response.data.length === 1) {
-        // console.log('productData.RESPONSE', response.data);
-        const item = response.data.find(
-          (elem) => elem.projectName === findText,
-        );
-        this.form.patchValue({
-          projectTo: item?.projectName,
-          budgetId: item?.id,
-        });
-      }
-      // this.searchBudgetText.set('');
-    });
-  }
+  fileList: File[] | undefined = undefined;
 
   form = this.fb.group({
     id: [0],
@@ -85,7 +66,7 @@ export class VoucherDetails implements OnInit {
     supplierTo: [null as any],
     projectTo: [null as any],
     budgetId: [null as number | null],
-    file: [null as any],
+    files: [[] as (File | FileDrive)[]],
     address: [null as string | null],
     zone: [null as string | null],
     commune: [null as string | null],
@@ -94,6 +75,41 @@ export class VoucherDetails implements OnInit {
     taxConversion: [0],
     totalConversion: [0],
   });
+
+  onRemoveFileEvent(fileName: string) {
+    // get file from objInput().files by name
+    const fileToRemove = this.objInput().files?.find(
+      (file) => file.fileName === fileName,
+    );
+
+    if (fileToRemove && fileToRemove.folderParentId && fileToRemove.fileId) {
+      this.driveService.deleteFilesByFileId(fileToRemove.fileId).subscribe();
+    }
+  }
+
+  onSearchBudgetChange(event: string) {
+    this.searchBudgetText.set(event);
+    const searchSplit = event.split(' - ');
+    const findText = searchSplit.length > 1 ? searchSplit[1] : searchSplit[0];
+    const productData$ = this.budgetService.getBudgets({
+      offset: 0,
+      limit: 100,
+      searchText: findText,
+    });
+
+    productData$.subscribe((response) => {
+      this.budgetsResource.set(response);
+      if (response.data.length === 1) {
+        const item = response.data.find(
+          (elem) => elem.projectName === findText,
+        );
+        this.form.patchValue({
+          projectTo: item?.projectName,
+          budgetId: item?.id,
+        });
+      }
+    });
+  }
 
   budgetsResource = rxResource({
     request: () => ({
@@ -110,8 +126,11 @@ export class VoucherDetails implements OnInit {
     },
   });
 
+  onFilesEvent(event: File[]) {
+    this.fileList = event;
+  }
+
   onGuideDateChange(event: Date) {
-    // console.log('VoucherDetails.onGuideDateChange', event);
     //actualizar guideDate en form
     this.form.patchValue({
       createAt: event,
@@ -133,22 +152,36 @@ export class VoucherDetails implements OnInit {
   }
 
   setFormValue(formLike: Partial<MaterialGuideGeneric>) {
-    this.form.reset(this.objInput() as MaterialGuideGeneric);
+    this.form.reset({
+      ...this.objInput(),
+      files: [],
+    });
     const { createAt } = this.objInput();
 
     formLike = {
       ...formLike,
       createAt: createAt! ?? new Date(),
+      documentType: 5, // default to VALE DE CONSUMO
     } as Partial<MaterialGuideGeneric>;
 
     this.form.patchValue(formLike as any);
-    // console.log('VoucherDetails.setFormValue', this.form.value);
+
+    this.fileList = this.objInput().files?.map((file) => {
+      const blob = new Blob([file.fileId], { type: file.contentType });
+      return new File([blob], file.fileName, { type: file.contentType });
+    }) as File[];
+  }
+
+  avoidEnter(event: Event): void {
+    const target = event.target as HTMLElement;
+    // Si no proviene de un textarea, bloquea el envío
+    if (target.tagName !== 'TEXTAREA') {
+      event.preventDefault();
+    }
   }
 
   ngOnInit(): void {
-    // console.log('VoucherDetails.ngOnInit', this.objInput());
     this.setFormValue(this.objInput());
-    // console.log('VoucherDetails.ngOnInit', this.form.value);
   }
 
   async onSubmit() {
@@ -162,29 +195,35 @@ export class VoucherDetails implements OnInit {
       ...(formValue as MaterialGuideGeneric),
     };
 
-    // console.log('VoucherDetails.onSubmit.objInput', this.objInput());
-    // console.log('VoucherDetails.onSubmit.formValue', formValue);
-    // console.log('VoucherDetails.onSubmit.objLike', objLike);
-
     if (this.objInput().id == 0) {
       // Crear presupuesto
       const response = await firstValueFrom(
         this.materialService.createMaterial(
           objLike,
-          'materials/vouchers' /* , this.imageFileList */,
+          'materials/vouchers',
+          this.fileList,
         ),
       );
 
       this.router.navigate(['/admin/materials/voucher', response.data]);
     } else {
-      await firstValueFrom(
+      const response = await firstValueFrom(
         this.materialService.updateMaterial(
           this.objInput().id.toString(),
           objLike,
           'materials/vouchers',
-          /* this.imageFileList */
+          this.fileList,
         ),
       );
+
+      this.objInput().files = [
+        ...(this.objInput().files ?? []),
+        ...response.data,
+      ];
+
+      this.form.patchValue({
+        files: [...(this.form.value.files ?? []), ...response.data],
+      });
     }
 
     this.wasSaved.set(true);

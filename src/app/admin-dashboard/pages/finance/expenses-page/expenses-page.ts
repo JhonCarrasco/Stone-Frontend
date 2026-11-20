@@ -17,7 +17,7 @@ export class ExpensesPage {
   financeService = inject(FinanceService);
   paginationService = inject(PaginationService);
   activatedRoute = inject(ActivatedRoute);
-  elementsPerPage = signal(10);
+  elementsPerPage = signal(50);
   searchText = signal('');
 
   // expensesResource = signal({

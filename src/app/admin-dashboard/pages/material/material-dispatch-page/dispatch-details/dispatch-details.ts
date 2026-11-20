@@ -4,7 +4,9 @@ import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CalendarDatepicker } from '@shared/components/calendar-datepicker/calendar-datepicker';
 import { FormErrorLabelComponent } from '@shared/components/form-error-label/form-error-label.component';
+import { InputFile } from '@shared/components/input-file/input-file';
 import { Customer } from '@shared/models/customer.model';
+import { FileDrive } from '@shared/models/fileDrive.model';
 import { Material, MaterialGuideGeneric } from '@shared/models/material.model';
 import { Provider } from '@shared/models/provider.model';
 import { firstValueFrom } from 'rxjs';
@@ -13,11 +15,13 @@ import {
   getCurrencyTypeDescription,
 } from 'src/app/constant/currencyTypeData';
 import {
+  DocumentDriveType,
   documentType,
   getDocumentTypeDescription,
 } from 'src/app/constant/documentTypeData';
 import { getZoneDescription, zoneList } from 'src/app/constant/zoneData';
 import { ItemizedMaterialTable } from 'src/app/materials/components/itemizedMaterial-table/itemizedMaterial-table';
+import { DriveService } from 'src/app/services/driveService';
 import { MaterialService } from 'src/app/services/materialService';
 import { ProviderService } from 'src/app/services/providerService';
 import { SharedService } from 'src/app/services/shared.services';
@@ -31,6 +35,7 @@ const _taxRate = environment.taxRate;
     FormErrorLabelComponent,
     ItemizedMaterialTable,
     CalendarDatepicker,
+    InputFile,
   ],
   templateUrl: './dispatch-details.html',
 })
@@ -41,14 +46,16 @@ export class DispatchDetails implements OnInit {
   materialService = inject(MaterialService);
   providersService = inject(ProviderService);
   sharedService = inject(SharedService);
+  driveService = inject(DriveService);
   wasSaved = signal(false);
   currentTypeData = signal(currencyTypeData);
-  documentType = signal(documentType.filter((t) => t.type === 2)); // filtrar solo los tipos de documento de dispatch (type === 2)
-  // currentTypeDescriptionSelected = signal('');
-  // documentTypeDescriptionSelected = signal('');
+  documentType = signal(
+    documentType.filter((t) => t.type === DocumentDriveType.Dispatch),
+  ); // filtrar solo los tipos de documento de dispatch (type === 2)
   zoneList = signal(zoneList);
   zoneDescriptionSelected = signal('');
-  // communeDescriptionSelected = signal('');
+
+  fileList: File[] | undefined = undefined;
 
   form = this.fb.group({
     id: [0],
@@ -73,7 +80,7 @@ export class DispatchDetails implements OnInit {
     supplierTo: [null as any],
     projectTo: [null as any],
     budgetId: [null as number | null],
-    file: [null as any],
+    files: [[] as (File | FileDrive)[]],
     address: [null as string | null],
     zone: [null as number | null],
     commune: [null as number | null],
@@ -82,6 +89,21 @@ export class DispatchDetails implements OnInit {
     taxConversion: [0],
     totalConversion: [0],
   });
+
+  onRemoveFileEvent(fileName: string) {
+    // get file from objInput().files by name
+    const fileToRemove = this.objInput().files?.find(
+      (file) => file.fileName === fileName,
+    );
+
+    if (fileToRemove && fileToRemove.folderParentId && fileToRemove.fileId) {
+      this.driveService.deleteFilesByFileId(fileToRemove.fileId).subscribe();
+    }
+  }
+
+  onFilesEvent(event: File[]) {
+    this.fileList = event;
+  }
 
   onSelectedDocumentTypeChange(event: Event) {
     const value = (event.target as HTMLSelectElement).value;
@@ -107,21 +129,37 @@ export class DispatchDetails implements OnInit {
       netoConversion: null,
       taxConversion: null,
       totalConversion: null,
+      taxAmount:
+        ((this.form.value.neto ?? 0) * (this.form.value.taxRate ?? 0)) / 100,
     });
     // this.currentTypeDescriptionSelected.set(
     //   getCurrencyTypeDescription(Number(value) ?? null),
     // );
   }
-  onSelectionProviderChange(event: Event) {
+
+  async onSelectionProviderChange(event: Event) {
     const value = (event.target as HTMLSelectElement).value;
-    const selectedOption = this.providersResource
-      .value()
-      ?.data.find((option) => option.rut === value);
+
+    const providerFiltered = await firstValueFrom(
+      this.providersService.getProviders({
+        limit: 0,
+        offset: 0,
+        searchText: value,
+        uri: 'providers',
+      }),
+    );
+
+    // set providerResource to the filtered response
+    this.providersResource.set(providerFiltered);
+
+    const filteredSelectedOption = providerFiltered.data.find(
+      (option) => option.person.rut === value,
+    );
 
     this.form.patchValue({
-      provider: !selectedOption ? null : selectedOption,
-      providerRut: !selectedOption ? null : selectedOption.rut,
-      providerName: !selectedOption ? null : selectedOption.displayName,
+      provider: filteredSelectedOption ?? null,
+      providerRut: filteredSelectedOption?.person.rut ?? null,
+      providerName: filteredSelectedOption?.person.displayName ?? null,
     });
   }
 
@@ -177,13 +215,15 @@ export class DispatchDetails implements OnInit {
     request: () => ({
       page: 0,
       limit: 0,
-      searchText: 'providers',
+      searchText: '',
+      uri: 'providers',
     }),
     loader: ({ request }) => {
       return this.providersService.getProviders({
         limit: request.limit,
-        offset: 0,
-        searchText: 'providers',
+        offset: request.page,
+        searchText: request.searchText,
+        uri: request.uri,
       });
     },
   });
@@ -204,7 +244,10 @@ export class DispatchDetails implements OnInit {
   });
 
   setFormValue(formLike: Partial<MaterialGuideGeneric>) {
-    this.form.reset(this.objInput() as MaterialGuideGeneric);
+    this.form.reset({
+      ...this.objInput(),
+      files: [],
+    });
     const { provider, guideDate, taxRate } = this.objInput();
 
     formLike = {
@@ -214,12 +257,16 @@ export class DispatchDetails implements OnInit {
       guideDate: guideDate ?? new Date(),
       taxRate: taxRate ? taxRate * 100 : _taxRate, // valor entero para vista
     } as unknown as Partial<MaterialGuideGeneric>;
+
     this.form.patchValue(formLike as any);
+
+    this.fileList = this.objInput().files?.map((file) => {
+      const blob = new Blob([file.fileId], { type: file.contentType });
+      return new File([blob], file.fileName, { type: file.contentType });
+    }) as File[];
   }
 
   CalculateTotals() {
-    // console.log('CalculateTotals.objInput', this.objInput());
-    // console.log('CalculateTotals.form', this.form.value);
     const { totalValue, taxRate, neto } = this.objInput();
     const { valueCurrency: valueCurrencyForm, currencyType } = this.form.value;
 
@@ -239,15 +286,16 @@ export class DispatchDetails implements OnInit {
     });
   }
 
+  avoidEnter(event: Event): void {
+    const target = event.target as HTMLElement;
+    // Si no proviene de un textarea, bloquea el envío
+    if (target.tagName !== 'TEXTAREA') {
+      event.preventDefault();
+    }
+  }
+
   ngOnInit(): void {
-    // console.log('DispatchDetails.ngOnInit.objInput', this.objInput());
     this.setFormValue(this.objInput());
-    // this.documentTypeDescriptionSelected.set(
-    //   getDocumentTypeDescription(this.objInput().documentType ?? null),
-    // );
-    // this.currentTypeDescriptionSelected.set(
-    //   getCurrencyTypeDescription(this.objInput().currencyType ?? null),
-    // );
     this.zoneDescriptionSelected.set(
       getZoneDescription(this.objInput().zone ?? null),
     );
@@ -266,29 +314,42 @@ export class DispatchDetails implements OnInit {
       providerId: formValue.provider?.id ?? 0,
     };
 
-    // console.log('DispatchDetails.onSubmit.objInput', this.objInput());
-    // console.log('DispatchDetails.onSubmit.formValue', formValue);
-    // console.log('DispatchDetails.onSubmit.objLike', objLike);
-
     if (this.objInput().id == 0) {
       // Crear presupuesto
       const response = await firstValueFrom(
         this.materialService.createMaterial(
           objLike,
-          'materials/dispatches' /* , this.imageFileList */,
+          'materials/dispatches',
+          this.fileList,
         ),
       );
 
       this.router.navigate(['/admin/materials/dispatch', response.data]);
     } else {
-      await firstValueFrom(
+      const response = await firstValueFrom(
         this.materialService.updateMaterial(
           this.objInput().id.toString(),
           objLike,
           'materials/dispatches',
-          /* this.imageFileList */
+          this.fileList,
         ),
       );
+
+      this.objInput().files = [
+        ...(this.objInput().files ?? []),
+        ...response.data,
+      ];
+
+      this.form.patchValue({
+        files: [...(this.form.value.files ?? []), ...response.data],
+      });
+
+      // setTimeout(() => {
+      //   console.log('update.response', response);
+      //   console.log('update.objInput', this.objInput().files);
+      //   console.log('update.form', this.form.value.files);
+      //   console.log('update.fileList', this.fileList);
+      // }, 5000);
     }
 
     this.wasSaved.set(true);

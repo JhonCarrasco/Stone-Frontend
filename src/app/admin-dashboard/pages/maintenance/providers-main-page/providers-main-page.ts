@@ -15,7 +15,7 @@ import { ProviderService } from 'src/app/services/providerService';
 export class ProvidersMainPage {
   providerService = inject(ProviderService);
   paginationService = inject(PaginationService);
-  elementsPerPage = signal(10);
+  elementsPerPage = signal(50);
   searchProviderText = signal('');
 
   onSearchProviderChange(event: string) {

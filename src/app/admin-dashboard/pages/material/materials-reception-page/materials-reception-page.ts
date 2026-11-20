@@ -17,7 +17,7 @@ export class MaterialsReceptionPage {
   materialService = inject(MaterialService);
   paginationService = inject(PaginationService);
   activatedRoute = inject(ActivatedRoute);
-  elementsPerPage = signal(10);
+  elementsPerPage = signal(50);
   searchText = signal('');
   // modulePath = signal('');
 

@@ -20,7 +20,7 @@ import { CustomerService } from 'src/app/services/customer.service';
 export class CustomersMainPage {
   customerService = inject(CustomerService);
   paginationService = inject(PaginationService);
-  customersPerPage = signal(10);
+  customersPerPage = signal(50);
   searchCustomerText = signal('');
 
   customersResource = rxResource({

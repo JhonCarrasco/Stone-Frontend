@@ -1,0 +1,63 @@
+<div class="p-4 space-y-4">
+  <input
+    type="file"
+    #fileInput
+    multiple
+    class="hidden"
+    (change)="onFileSelected($event)"
+  />
+
+  <!-- Custom daisyUI button to trigger input -->
+  <button type="button" class="btn btn-primary" (click)="fileInput.click()">
+    Seleccionar Archivos
+  </button>
+
+  <!-- daisyUI Table -->
+  <div class="overflow-x-auto border border-base-200 rounded-box">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Archivo</th>
+          <th>Tamaño (MB)</th>
+          <th>Acción</th>
+        </tr>
+      </thead>
+      <tbody>
+        @if (filesInput() === null || filesInput().length === 0) {
+        <tr>
+          <td colspan="3" class="text-center text-gray-400">
+            Ningún Archivo Seleccionado
+          </td>
+        </tr>
+        } @else { @for (file of filesInput(); track file; let i = $index) {
+        <tr>
+          <td>{{ file.name }}</td>
+          <td>{{ (file.size / 1048576).toFixed(2) }} MB</td>
+          <td>
+            <!-- <button class="btn btn-error btn-xs" (click)="removeFile(i)">
+                Remover
+              </button> -->
+            <a class="btn btn-ghost text-accent btn-md" (click)="removeFile(i)"
+              ><div>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke-width="0.8"
+                  stroke="currentColor"
+                  class="w-6 h-6 text-white"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M9,3V4H4V6H5V19A2,2 0 0,0 7,21H17A2,2 0 0,0 19,19V6H20V4H15V3H9M7,6H17V19H7V6M9,8V17H11V8H9M13,8V17H15V8H13Z"
+                  />
+                </svg></div
+            ></a>
+          </td>
+        </tr>
+        } }
+      </tbody>
+    </table>
+  </div>
+</div>

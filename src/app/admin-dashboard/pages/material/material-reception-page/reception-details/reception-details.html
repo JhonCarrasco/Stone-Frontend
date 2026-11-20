@@ -3,8 +3,12 @@
 </h1>
 <div class="divider col-span-2"></div>
 
-<form [formGroup]="form" (ngSubmit)="onSubmit()">
-  <div class="grid grid-cols-2 gap-2">
+<form
+  [formGroup]="form"
+  (ngSubmit)="onSubmit()"
+  (keydown.enter)="avoidEnter($event)"
+>
+  <div class="grid grid-cols-2 gap-4 mt-4 mb-4">
     <!--GUARDAR-->
     <div class="col-span-2">
       <div class="flex justify-end h-12">
@@ -29,79 +33,6 @@
       <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
         <div class="sm:col-span-2">
           <label for="first-name" class="block text-sm/6 font-medium"
-            >Tipo de Documento</label
-          >
-          <div class="mt-2">
-            <select
-              class="select select-bordered w-full"
-              (change)="onSelectedDocumentTypeChange($event)"
-            >
-              <option>Seleccionar tipo documento</option>
-              @for (item of documentType(); track item.id) {
-              @if(this.objInput().documentType === item.id ){
-              <option selected [value]="item.id">{{item.description}}</option>
-              }@else {
-              <option [value]="item.id">{{item.description}}</option>
-              } }
-            </select>
-          </div>
-          <form-error-label [control]="form.get('currencyType')!" />
-        </div>
-
-        <div class="sm:col-span-2">
-          <label for="first-name" class="block text-sm/6 font-medium"
-            >Fecha</label
-          >
-          <div class="mt-2">
-            <calendar-datepicker
-              [dateInput]="objInput().guideDate"
-              (guideDateEvent)="onGuideDateChange($event)"
-            />
-          </div>
-          <form-error-label [control]="form.get('guideDate')!" />
-        </div>
-
-        <div class="sm:col-span-1">
-          <label for="first-name" class="block text-sm/6 font-medium"
-            >N° Ingreso</label
-          >
-          <div class="mt-2">
-            <input
-              readonly
-              id="id"
-              type="text"
-              name="id"
-              placeholder="N° Ingreso"
-              [class.border-red-500]="form.get('id')?.errors ?? false"
-              class="input input-bordered w-full bg-neutral"
-              formControlName="id"
-              (change)="onInputChange($event)"
-            />
-          </div>
-          <form-error-label [control]="form.get('id')!" />
-        </div>
-
-        <div class="sm:col-span-1">
-          <label for="first-name" class="block text-sm/6 font-medium"
-            >Folio</label
-          >
-          <div class="mt-2">
-            <input
-              id="folio"
-              type="text"
-              name="folio"
-              placeholder="Folio"
-              [class.border-red-500]="form.get('folio')?.errors ?? false"
-              class="input input-bordered w-full"
-              formControlName="folio"
-              (change)="onInputChange($event)"
-            />
-          </div>
-          <form-error-label [control]="form.get('folio')!" />
-        </div>
-
-        <div class="sm:col-span-2">
-          <label for="first-name" class="block text-sm/6 font-medium"
             >Rut Proveedor</label
           >
           <div class="mt-2">
@@ -123,7 +54,7 @@
           >
             <option disabled selected>Seleccionar un proveedor</option>
             @for (item of providersResource.value()?.data; track item.id) {
-            <option [value]="item.rut" [tabIndex]="item.id"></option>
+            <option [value]="item.person.rut" [tabIndex]="item.id"></option>
             }
           </datalist>
         </div>
@@ -146,6 +77,116 @@
             />
           </div>
           <form-error-label [control]="form.get('providerName')!" />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Ancho Dividido -->
+  <div class="grid grid-cols-2 gap-2 border-t border-b border-gray-300 pr-4">
+    <!-- Left Side -->
+    <div class="flex flex-col gap-2 border-r border-gray-300 pr-4">
+      <div class="border-b border-gray-900/10 pb-12">
+        <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+          <!-- elements -->
+          <div class="sm:col-span-3">
+            <label for="first-name" class="block text-sm/6 font-medium"
+              >Tipo de Documento</label
+            >
+            <div class="mt-2">
+              <select
+                class="select select-bordered w-full"
+                (change)="onSelectedDocumentTypeChange($event)"
+              >
+                <option>Seleccionar tipo documento</option>
+                @for (item of documentType(); track item.id) {
+                @if(this.objInput().documentType === item.id ){
+                <option selected [value]="item.id">{{item.description}}</option>
+                }@else {
+                <option [value]="item.id">{{item.description}}</option>
+                } }
+              </select>
+            </div>
+            <form-error-label [control]="form.get('currencyType')!" />
+          </div>
+
+          <div class="sm:col-span-1">
+            <label for="first-name" class="block text-sm/6 font-medium"
+              >N° Ingreso</label
+            >
+            <div class="mt-2">
+              <input
+                readonly
+                id="id"
+                type="text"
+                name="id"
+                placeholder="N° Ingreso"
+                [class.border-red-500]="form.get('id')?.errors ?? false"
+                class="input input-bordered w-full bg-neutral"
+                formControlName="id"
+                (change)="onInputChange($event)"
+              />
+            </div>
+            <form-error-label [control]="form.get('id')!" />
+          </div>
+
+          <div class="sm:col-span-1">
+            <label for="first-name" class="block text-sm/6 font-medium"
+              >Folio</label
+            >
+            <div class="mt-2">
+              <input
+                id="folio"
+                type="text"
+                name="folio"
+                placeholder="Folio"
+                [class.border-red-500]="form.get('folio')?.errors ?? false"
+                class="input input-bordered w-full"
+                formControlName="folio"
+                (change)="onInputChange($event)"
+              />
+            </div>
+            <form-error-label [control]="form.get('folio')!" />
+          </div>
+
+          <div class="sm:col-span-2">
+            <label for="first-name" class="block text-sm/6 font-medium"
+              >Fecha</label
+            >
+            <div class="mt-2">
+              <calendar-datepicker
+                [dateInput]="objInput().guideDate"
+                (guideDateEvent)="onGuideDateChange($event)"
+              />
+            </div>
+            <form-error-label [control]="form.get('guideDate')!" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Side -->
+    <div class="flex flex-col gap-2">
+      <div class="border-b border-gray-900/10 pb-12">
+        <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+          <!-- elements -->
+          <div class="sm:col-span-6">
+            <label for="first-name" class="block text-sm/6 font-medium"
+              >Observaciones</label
+            >
+            <div class="mt-2">
+              <textarea
+                id="observations"
+                type="text"
+                name="observations"
+                placeholder="Observaciones"
+                class="textarea textarea-bordered textarea-lg w-full h-32"
+                formControlName="observations"
+                (change)="onInputChange($event)"
+              ></textarea>
+            </div>
+            <form-error-label [control]="form.get('observations')!" />
+          </div>
         </div>
       </div>
     </div>
@@ -178,22 +219,14 @@
     <div class="flex flex-col gap-2 border-r border-gray-300 pr-4">
       <div class="border-b border-gray-900/10 pb-12">
         <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+          <!-- elements -->
+
           <div class="sm:col-span-6">
-            <label for="first-name" class="block text-sm/6 font-medium"
-              >Observaciones</label
-            >
-            <div class="mt-2">
-              <textarea
-                id="observations"
-                type="text"
-                name="observations"
-                placeholder="Observaciones"
-                class="textarea textarea-bordered textarea-lg w-full h-64"
-                formControlName="observations"
-                (change)="onInputChange($event)"
-              ></textarea>
-            </div>
-            <form-error-label [control]="form.get('observations')!" />
+            <input-file
+              [filesInput]="this.fileList ?? []"
+              (filesEvent)="onFilesEvent($event)"
+              (removeFileEvent)="onRemoveFileEvent($event)"
+            ></input-file>
           </div>
         </div>
       </div>
@@ -400,6 +433,18 @@
             }
           </div>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-2 gap-2 mt-4 mb-4">
+    <!--GUARDAR-->
+    <div class="col-span-2">
+      <div class="flex justify-end h-12">
+        <button class="btn btn-secondary" type="submit">
+          <!-- <span class="loading loading-spinner loading-sm"></span> -->
+          Guardar
+        </button>
       </div>
     </div>
   </div>

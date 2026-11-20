@@ -4,7 +4,9 @@ import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CalendarDatepicker } from '@shared/components/calendar-datepicker/calendar-datepicker';
 import { FormErrorLabelComponent } from '@shared/components/form-error-label/form-error-label.component';
+import { InputFile } from '@shared/components/input-file/input-file';
 import { Customer } from '@shared/models/customer.model';
+import { FileDrive } from '@shared/models/fileDrive.model';
 import { Material, MaterialGuideGeneric } from '@shared/models/material.model';
 import { Provider } from '@shared/models/provider.model';
 import { firstValueFrom } from 'rxjs';
@@ -12,8 +14,12 @@ import {
   currencyTypeData,
   getCurrencyTypeDescription,
 } from 'src/app/constant/currencyTypeData';
-import { documentType } from 'src/app/constant/documentTypeData';
+import {
+  DocumentDriveType,
+  documentType,
+} from 'src/app/constant/documentTypeData';
 import { ItemizedMaterialTable } from 'src/app/materials/components/itemizedMaterial-table/itemizedMaterial-table';
+import { DriveService } from 'src/app/services/driveService';
 import { MaterialService } from 'src/app/services/materialService';
 import { ProviderService } from 'src/app/services/providerService';
 import { environment } from 'src/environments/environment';
@@ -27,6 +33,7 @@ const _taxRate = environment.taxRate;
     FormErrorLabelComponent,
     ItemizedMaterialTable,
     CalendarDatepicker,
+    InputFile,
   ],
   templateUrl: './reception-details.html',
 })
@@ -36,11 +43,13 @@ export class ReceptionDetails implements OnInit {
   fb = inject(FormBuilder);
   materialService = inject(MaterialService);
   providersService = inject(ProviderService);
+  driveService = inject(DriveService);
   wasSaved = signal(false);
   currentTypeData = signal(currencyTypeData);
-  documentType = signal(documentType.filter((t) => t.type === 1)); // filtrar solo los tipos de documento de recepción (type === 1)
-  // currentTypeDescriptionSelected = signal('');
-  // documentTypeDescriptionSelected = signal('');
+  documentType = signal(
+    documentType.filter((t) => t.type === DocumentDriveType.Reception),
+  ); // filtrar solo los tipos de documento de recepción (type === 1)
+  fileList: File[] | undefined = undefined;
 
   form = this.fb.group({
     id: [0],
@@ -65,7 +74,7 @@ export class ReceptionDetails implements OnInit {
     supplierTo: [null as any],
     projectTo: [null as any],
     budgetId: [null as number | null],
-    file: [null as any],
+    files: [[] as (File | FileDrive)[]],
     address: [null as string | null],
     zone: [null as string | null],
     commune: [null as string | null],
@@ -75,48 +84,21 @@ export class ReceptionDetails implements OnInit {
     totalConversion: [0],
   });
 
-  onSelectedDocumentTypeChange(event: Event) {
-    const value = (event.target as HTMLSelectElement).value;
-    this.form.patchValue({
-      documentType: Number(value) ?? null,
-    });
-    // this.documentTypeDescriptionSelected.set(
-    //   getDocumentTypeDescription(Number(value) ?? null),
-    // );
-  }
-  onGuideDateChange(event: Date) {
-    // console.log('ReceptionDetails.onGuideDateChange', event);
-    //actualizar guideDate en form
-    this.form.patchValue({
-      guideDate: event,
-    });
+  onRemoveFileEvent(fileName: string) {
+    // get file from objInput().files by name
+    const fileToRemove = this.objInput().files?.find(
+      (file) => file.fileName === fileName,
+    );
+
+    if (fileToRemove && fileToRemove.folderParentId && fileToRemove.fileId) {
+      this.driveService.deleteFilesByFileId(fileToRemove.fileId).subscribe();
+    }
   }
 
-  onSelectedCurrentTypeChange(event: Event) {
-    const { name, value } = event.target as HTMLSelectElement;
-    this.form.patchValue({
-      currencyType: Number(value) ?? null,
-      valueCurrency: null, // reset each new selected item
-      netoConversion: null,
-      taxConversion: null,
-      totalConversion: null,
-    });
-    // this.currentTypeDescriptionSelected.set(
-    //   getCurrencyTypeDescription(Number(value) ?? null),
-    // );
+  onFilesEvent(event: File[]) {
+    this.fileList = event;
   }
-  onSelectionProviderChange(event: Event) {
-    const value = (event.target as HTMLSelectElement).value;
-    const selectedOption = this.providersResource
-      .value()
-      ?.data.find((option) => option.rut === value);
 
-    this.form.patchValue({
-      provider: !selectedOption ? null : selectedOption,
-      providerRut: !selectedOption ? null : selectedOption.rut,
-      providerName: !selectedOption ? null : selectedOption.displayName,
-    });
-  }
   onItemizedMaterialChange(event: Material[]) {
     // actualizar materials en form
     this.form.patchValue({
@@ -137,6 +119,63 @@ export class ReceptionDetails implements OnInit {
     });
   }
 
+  onSelectedDocumentTypeChange(event: Event) {
+    const value = (event.target as HTMLSelectElement).value;
+    this.form.patchValue({
+      documentType: Number(value) ?? null,
+    });
+  }
+
+  onGuideDateChange(event: Date) {
+    // console.log('ReceptionDetails.onGuideDateChange', event);
+    //actualizar guideDate en form
+    this.form.patchValue({
+      guideDate: event,
+    });
+  }
+
+  onSelectedCurrentTypeChange(event: Event) {
+    const { name, value } = event.target as HTMLSelectElement;
+    this.form.patchValue({
+      currencyType: Number(value) ?? null,
+      valueCurrency: null, // reset each new selected item
+      netoConversion: null,
+      taxConversion: null,
+      totalConversion: null,
+      taxAmount:
+        ((this.form.value.neto ?? 0) * (this.form.value.taxRate ?? 0)) / 100,
+    });
+    // this.currentTypeDescriptionSelected.set(
+    //   getCurrencyTypeDescription(Number(value) ?? null),
+    // );
+  }
+
+  async onSelectionProviderChange(event: Event) {
+    const value = (event.target as HTMLSelectElement).value;
+
+    const providerFiltered = await firstValueFrom(
+      this.providersService.getProviders({
+        limit: 0,
+        offset: 0,
+        searchText: value,
+        uri: 'providers',
+      }),
+    );
+
+    // set providerResource to the filtered response
+    this.providersResource.set(providerFiltered);
+
+    const filteredSelectedOption = providerFiltered.data.find(
+      (option) => option.person.rut === value,
+    );
+
+    this.form.patchValue({
+      provider: filteredSelectedOption ?? null,
+      providerRut: filteredSelectedOption?.person.rut ?? null,
+      providerName: filteredSelectedOption?.person.displayName ?? null,
+    });
+  }
+
   onInputChange(event: Event) {
     const { value, name } = event.target as HTMLSelectElement;
 
@@ -154,19 +193,24 @@ export class ReceptionDetails implements OnInit {
     request: () => ({
       page: 0,
       limit: 0,
-      searchText: 'providers',
+      searchText: '',
+      uri: 'providers',
     }),
     loader: ({ request }) => {
       return this.providersService.getProviders({
         limit: request.limit,
-        offset: 0,
-        searchText: 'providers',
+        offset: request.page,
+        searchText: request.searchText,
+        uri: request.uri,
       });
     },
   });
 
   setFormValue(formLike: Partial<MaterialGuideGeneric>) {
-    this.form.reset(this.objInput() as MaterialGuideGeneric);
+    this.form.reset({
+      ...this.objInput(),
+      files: [],
+    });
     const { provider, guideDate, taxRate } = this.objInput();
 
     formLike = {
@@ -178,25 +222,18 @@ export class ReceptionDetails implements OnInit {
     } as unknown as Partial<MaterialGuideGeneric>;
 
     this.form.patchValue(formLike as any);
+
+    this.fileList = this.objInput().files?.map((file) => {
+      const blob = new Blob([file.fileId], { type: file.contentType });
+      return new File([blob], file.fileName, { type: file.contentType });
+    }) as File[];
   }
 
   CalculateTotals() {
-    // console.log('CalculateTotals.objInput', this.objInput());
-    // console.log('CalculateTotals.form', this.form.value);
-    const {
-      totalValue,
-      taxRate,
-      neto,
-      // valueCurrency: valueCurrencyInput,
-    } = this.objInput();
+    const { totalValue, taxRate, neto } = this.objInput();
     const { valueCurrency: valueCurrencyForm, currencyType } = this.form.value;
 
     const isValueCurrency = valueCurrencyForm && Number(currencyType) > 1;
-
-    // console.log('valueCurrencyInput', valueCurrencyInput);
-    // console.log('valueCurrencyForm', valueCurrencyForm);
-    // console.log('isValueCurrency', isValueCurrency);
-    // console.log('currencyType', currencyType);
 
     this.form.patchValue({
       neto: neto ?? 0,
@@ -212,15 +249,16 @@ export class ReceptionDetails implements OnInit {
     });
   }
 
+  avoidEnter(event: Event): void {
+    const target = event.target as HTMLElement;
+    // Si no proviene de un textarea, bloquea el envío
+    if (target.tagName !== 'TEXTAREA') {
+      event.preventDefault();
+    }
+  }
+
   ngOnInit(): void {
-    // console.log('ReceptionDetails.ngOnInit', this.objInput());
     this.setFormValue(this.objInput());
-    // this.documentTypeDescriptionSelected.set(
-    //   getDocumentTypeDescription(this.objInput().documentType ?? null),
-    // );
-    // this.currentTypeDescriptionSelected.set(
-    //   getCurrencyTypeDescription(this.objInput().currencyType ?? null),
-    // );
     this.CalculateTotals();
   }
 
@@ -232,33 +270,39 @@ export class ReceptionDetails implements OnInit {
     const formValue = this.form.value;
 
     const objLike: Partial<MaterialGuideGeneric> = {
-      ...(formValue as MaterialGuideGeneric),
+      ...(formValue as unknown as Partial<MaterialGuideGeneric>),
       providerId: formValue.provider?.id ?? 0,
     };
-
-    // console.log('ReceptionDetails.onSubmit.objInput', this.objInput());
-    // console.log('ReceptionDetails.onSubmit.formValue', formValue);
-    // console.log('ReceptionDetails.onSubmit.objLike', objLike);
 
     if (this.objInput().id == 0) {
       // Crear presupuesto
       const response = await firstValueFrom(
         this.materialService.createMaterial(
           objLike,
-          'materials/receptions' /* , this.imageFileList */,
+          'materials/receptions',
+          this.fileList,
         ),
       );
 
       this.router.navigate(['/admin/materials/reception', response.data]);
     } else {
-      await firstValueFrom(
+      const response = await firstValueFrom(
         this.materialService.updateMaterial(
           this.objInput().id.toString(),
           objLike,
           'materials/receptions',
-          /* this.imageFileList */
+          this.fileList,
         ),
       );
+
+      this.objInput().files = [
+        ...(this.objInput().files ?? []),
+        ...response.data,
+      ];
+
+      this.form.patchValue({
+        files: [...(this.form.value.files ?? []), ...response.data],
+      });
     }
 
     this.wasSaved.set(true);
