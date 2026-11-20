@@ -4,9 +4,12 @@ import {
   BaseResponseGeneric,
   Options,
 } from '@shared/models/baseResponseGeneric.model';
+import { FileDrive, FileRequest } from '@shared/models/fileDrive.model';
 import { MaterialGuideGeneric } from '@shared/models/material.model';
-import { Observable, of, tap } from 'rxjs';
+import { Observable, of, tap, switchMap, firstValueFrom } from 'rxjs';
 import { environment } from 'src/environments/environment';
+import { DriveService } from './driveService';
+import { DocumentDriveType } from '../constant/documentTypeData';
 
 const baseUrl = environment.baseUrl;
 
@@ -188,7 +191,7 @@ const emptyMaterialGuide: MaterialGuideGeneric = {
   supplierTo: null,
   projectTo: null,
   budgetId: null,
-  file: null,
+  files: [],
   address: null,
   zone: null,
   commune: null,
@@ -198,6 +201,7 @@ const emptyMaterialGuide: MaterialGuideGeneric = {
 @Injectable({ providedIn: 'root' })
 export class MaterialService {
   private http = inject(HttpClient);
+  private driveService = inject(DriveService);
 
   private guidesCache = new Map<
     string,
@@ -212,8 +216,7 @@ export class MaterialService {
     options: Options,
   ): Observable<BaseResponseGeneric<MaterialGuideGeneric[]>> {
     const { limit = 10, offset = 0, searchText = '', uri } = options;
-    const key = `${uri}-${limit}-${offset}-${searchText}`; // 10-0-''
-    // console.log('getBudgets-key-cache', key);
+    const key = `${uri}-${limit}-${offset}-${searchText}`;
     if (this.guidesCache.has(key)) {
       return of(this.guidesCache.get(key)!);
     }
@@ -226,10 +229,7 @@ export class MaterialService {
           searchText,
         },
       })
-      .pipe(
-        // tap((resp) => console.log('service.getMaterials', uri, resp)),
-        tap((resp) => this.guidesCache.set(key, resp)),
-      );
+      .pipe(tap((resp) => this.guidesCache.set(key, resp)));
   }
 
   getMaterialById(
@@ -248,57 +248,71 @@ export class MaterialService {
 
     return this.http
       .get<BaseResponseGeneric<MaterialGuideGeneric>>(`${baseUrl}/${uri}/${id}`)
-      .pipe(
-        tap((obj) => this.guideCache.set(id, obj)),
-        // tap((obj) => console.log('service.getMaterialById', obj)),
-      );
+      .pipe(tap((obj) => this.guideCache.set(id, obj)));
   }
 
   updateMaterial(
     id: string,
     obj: Partial<MaterialGuideGeneric>,
     uri: string,
-    /* images?: FileList, */
-  ): Observable<BaseResponseGeneric<MaterialGuideGeneric>> {
-    // if (images) {
-    //   const imagesNames = await firstValueFrom(this.uploadImages(id, images));
-    //   product.images = imagesNames;
-    // }
-
-    // return this.uploadImages(images).pipe(
-    //   map((imagesNames) => ({
-    //     ...product,
-    //     images: [...(product.images ?? []), ...imagesNames],
-    //   })),
-    //   switchMap((product) =>
-    //     this.http.patch<Budget>(`${baseUrl}/products/${id}`, product),
-    //   ),
-    //   tap((product) => this.updateBudgetCache(id, product)),
-    // );
+    fileList?: File[],
+  ): Observable<BaseResponseGeneric<FileDrive[]>> {
     return this.http
-      .put<
-        BaseResponseGeneric<MaterialGuideGeneric>
-      >(`${baseUrl}/${uri}/${id}`, obj)
+      .put<BaseResponseGeneric<FileDrive[]>>(`${baseUrl}/${uri}/${id}`, obj)
       .pipe(
-        tap((response) => this.updateMaterialCache(id, obj)),
-        // tap((response) =>
-        //   console.log('service.updateMaterial.response', response, obj),
-        // ),
+        // tap((response) => this.updateMaterialCache(id, obj)),
+        switchMap((x) => {
+          fileList = fileList?.filter((file) => {
+            // Quitar copias representativas del listado de archivos que ya existen en obj.files
+            const existingFile = obj.files?.find(
+              (f) => f.fileName === file.name,
+            );
+            return !existingFile; // Keep the file if it doesn't exist in obj.files
+          });
+
+          if (fileList && fileList?.length > 0) {
+            const requestDrive: FileRequest = {
+              folderId: obj.files?.[0]?.folderParentId ?? null,
+              documentId: Number(x.data), // ID del documento recién creado
+              documentType: obj.documentType ?? 0,
+              rut: obj.providerRut ?? '',
+              files: fileList,
+            };
+            return this.driveService
+              .upload(requestDrive)
+              .pipe(tap((resp) => of(resp)));
+          }
+          return of(x);
+        }),
       );
   }
 
   createMaterial(
     obj: Partial<MaterialGuideGeneric>,
     uri: string,
+    fileList?: File[],
   ): Observable<BaseResponseGeneric<number>> {
-    // console.log('createBudget-service');
     return this.http
       .post<BaseResponseGeneric<number>>(`${baseUrl}/${uri}`, obj)
       .pipe(
-        tap((response) =>
-          this.updateMaterialCache(response.data.toString(), obj),
-        ),
-        tap((response) => console.log('service.createMaterial', response, obj)),
+        switchMap((x) => {
+          const requestDrive: FileRequest = {
+            folderId: null,
+            documentId: Number(x.data), // ID del documento recién creado
+            documentType: obj.documentType ?? 0,
+            rut: obj.providerRut ?? '',
+            files: fileList,
+          };
+          return this.driveService.upload(requestDrive).pipe(
+            // tap((response) =>
+            //   console.log(
+            //     'MaterialService.createMaterial.responseDrive',
+            //     response,
+            //   ),
+            // ),
+            switchMap(() => of(x)),
+          );
+        }),
       );
   }
 

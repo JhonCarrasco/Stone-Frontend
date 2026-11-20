@@ -16,7 +16,7 @@ const uriService = 'materials/vouchers';
 export class MaterialsVoucherPage {
   materialService = inject(MaterialService);
   paginationService = inject(PaginationService);
-  elementsPerPage = signal(10);
+  elementsPerPage = signal(50);
   searchText = signal('');
 
   vouchersResource = rxResource({

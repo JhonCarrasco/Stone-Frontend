@@ -63,6 +63,7 @@ export const adminDashboardRoutes: Routes = [
       {
         path: 'materials/reception',
         component: MaterialsReceptionPage,
+        runGuardsAndResolvers: 'always',
         data: {},
       },
       {

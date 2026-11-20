@@ -83,7 +83,7 @@ export class ProviderService {
   getProviders(options: Options): Observable<BaseResponseGeneric<Provider[]>> {
     const { limit = 0, offset = 0, searchText = '', uri } = options;
     const key = `${uri}-${limit}-${offset}-${searchText}`; // 0-0-'providers' //valor inicial
-    console.log('getProviders-key-cache', key);
+    // console.log('getProviders-key-cache', key);
     if (this.providersCache.has(key)) {
       return of(this.providersCache.get(key)!);
     }
@@ -97,7 +97,7 @@ export class ProviderService {
         },
       })
       .pipe(
-        tap((resp) => console.log('ProviderService.getProviders', resp)),
+        // tap((resp) => console.log('ProviderService.getProviders', resp)),
         tap((resp) => this.providersCache.set(key, resp)),
       );
   }

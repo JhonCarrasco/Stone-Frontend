@@ -16,7 +16,7 @@ export class ProductPageComponent {
 
   productsService = inject(ProductsService);
   paginationService = inject(PaginationService);
-  productsPerPage = signal(10);
+  productsPerPage = signal(50);
 
   productIdSlug = this.activatedRoute.snapshot.params['idSlug'];
 

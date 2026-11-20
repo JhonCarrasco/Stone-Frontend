@@ -6,8 +6,11 @@ import {
 } from '@shared/models/baseResponseGeneric.model';
 import { Budget } from '@shared/models/budget.model';
 import { Customer } from '@shared/models/customer.model';
-import { Observable, of, tap } from 'rxjs';
+import { Observable, of, switchMap, tap } from 'rxjs';
 import { environment } from 'src/environments/environment';
+import { DriveService } from './driveService';
+import { FileDrive, FileRequest } from '@shared/models/fileDrive.model';
+import { documentType } from '../constant/documentTypeData';
 
 const baseUrl = environment.baseUrl;
 
@@ -32,11 +35,14 @@ const emptyBudget: Budget = {
   customer: {} as Customer,
   itemizedProducts: [],
   itemizedServices: [],
+  files: [],
+  documentType: 0,
 };
 
 @Injectable({ providedIn: 'root' })
 export class BudgetService {
   private http = inject(HttpClient);
+  private driveService = inject(DriveService);
 
   private budgetsCache = new Map<string, BaseResponseGeneric<Budget[]>>();
   private budgetCache = new Map<string, BaseResponseGeneric<Budget>>();
@@ -83,42 +89,64 @@ export class BudgetService {
   updateBudget(
     id: string,
     obj: Partial<Budget>,
-    /* images?: FileList, */
-  ): Observable<BaseResponseGeneric<Budget>> {
-    // if (images) {
-    //   const imagesNames = await firstValueFrom(this.uploadImages(id, images));
-    //   product.images = imagesNames;
-    // }
-
-    // return this.uploadImages(images).pipe(
-    //   map((imagesNames) => ({
-    //     ...product,
-    //     images: [...(product.images ?? []), ...imagesNames],
-    //   })),
-    //   switchMap((product) =>
-    //     this.http.patch<Budget>(`${baseUrl}/products/${id}`, product),
-    //   ),
-    //   tap((product) => this.updateBudgetCache(id, product)),
-    // );
+    fileList?: File[],
+  ): Observable<BaseResponseGeneric<FileDrive[]>> {
     return this.http
-      .put<BaseResponseGeneric<Budget>>(`${baseUrl}/budgets/${id}`, obj)
+      .put<BaseResponseGeneric<FileDrive[]>>(`${baseUrl}/budgets/${id}`, obj)
       .pipe(
-        tap((response) => this.updateBudgetCache(id, obj)),
+        // tap((response) => this.updateBudgetCache(id, obj)),
         // tap((response) =>
         //   console.log('service.updateBudget.response', response, obj),
         // ),
+        switchMap((x) => {
+          fileList = fileList?.filter((file) => {
+            // Quitar copias representativas del listado de archivos que ya existen en obj.files
+            const existingFile = obj.files?.find(
+              (f) => f.fileName === file.name,
+            );
+            return !existingFile; // Keep the file if it doesn't exist in obj.files
+          });
+
+          if (fileList && fileList?.length > 0) {
+            const requestDrive: FileRequest = {
+              folderId: obj.files?.[0]?.folderParentId ?? null,
+              documentId: Number(x.data), // ID del documento recién creado
+              documentType: obj.documentType ?? 0, // ID documentTypeData
+              files: fileList,
+            };
+            return this.driveService
+              .upload(requestDrive)
+              .pipe(tap((resp) => of(resp)));
+          }
+          return of(x);
+        }),
       );
   }
 
-  createBudget(obj: Partial<Budget>): Observable<BaseResponseGeneric<number>> {
-    // console.log('createBudget-service');
+  createBudget(
+    obj: Partial<Budget>,
+    fileList?: File[],
+  ): Observable<BaseResponseGeneric<number>> {
     return this.http
       .post<BaseResponseGeneric<number>>(`${baseUrl}/budgets`, obj)
       .pipe(
-        tap((response) =>
-          this.updateBudgetCache(response.data.toString(), obj),
-        ),
-        // tap((response) => console.log('service.createBudget', response, obj)),
+        // tap((response) =>
+        //   this.updateBudgetCache(response.data.toString(), obj),
+        // ),
+        switchMap((x) => {
+          const requestDrive: FileRequest = {
+            folderId: null,
+            documentId: Number(x.data), // ID del documento recién creado
+            documentType: obj.documentType ?? 0,
+            files: fileList,
+          };
+          return this.driveService.upload(requestDrive).pipe(
+            // tap((response) =>
+            //   console.log('BudgetService.createBudget.responseDrive', response),
+            // ),
+            switchMap(() => of(x)),
+          );
+        }),
       );
   }
 

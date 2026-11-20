@@ -16,7 +16,7 @@ import { BudgetService } from 'src/app/services/budgetService';
 export class BudgetsMainPage {
   budgetService = inject(BudgetService);
   paginationService = inject(PaginationService);
-  elementsPerPage = signal(10);
+  elementsPerPage = signal(50);
   searchBudgetText = signal('');
 
   budgetsResource = rxResource({

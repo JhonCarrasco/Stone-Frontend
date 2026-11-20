@@ -1,4 +1,5 @@
 import { Customer } from './customer.model';
+import { FileDrive } from './fileDrive.model';
 import { Provider } from './provider.model';
 
 export interface MaterialGuideGeneric {
@@ -25,7 +26,7 @@ export interface MaterialGuideGeneric {
   supplierTo: null;
   projectTo: null;
   budgetId: null;
-  file: null;
+  files?: FileDrive[] | null;
   address: null;
   zone: null;
   commune: null;
