@@ -248,7 +248,7 @@
                 (change)="onSelectedChange($event)"
               >
                 <option>Seleccionar comuna</option>
-                @for (item of communesResource.value()?.data; track item.id) {
+                @for (item of this.filteredCommunes(); track item.id) {
                 @if(this.objInput()?.location?.commune?.id === item.id ){
                 <option selected [value]="item.id">{{item.description}}</option>
                 }@else {
@@ -302,7 +302,8 @@
               >
                 <option>Seleccionar tipo de cuenta</option>
                 @for (item of typeAccountsResource.value()?.data; track item.id)
-                { @if(this.objInput()?.bankAccount?.typeAccount?.id === item.id ){
+                { @if(this.objInput()?.bankAccount?.typeAccount?.id === item.id
+                ){
                 <option selected [value]="item.id">{{item.description}}</option>
                 }@else {
                 <option [value]="item.id">{{item.description}}</option>

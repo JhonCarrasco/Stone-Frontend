@@ -1,4 +1,11 @@
-import { Component, inject, input, OnInit, signal } from '@angular/core';
+import {
+  Component,
+  computed,
+  inject,
+  input,
+  OnInit,
+  signal,
+} from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -28,6 +35,7 @@ export class CustomerDetails implements OnInit {
   customerService = inject(CustomerService);
   wasSaved = signal(false);
   typePersonData = signal(typePersonData);
+  selectedRegionId = signal<number | null>(null);
 
   form = this.fb.group({
     id: [0],
@@ -65,6 +73,15 @@ export class CustomerDetails implements OnInit {
         searchText: 'Communes',
       });
     },
+  });
+
+  // Derive the filtered list reactively
+  filteredCommunes = computed(() => {
+    const communes = this.communesResource.value()?.data ?? [];
+    const regionId = this.selectedRegionId();
+
+    if (!regionId) return communes;
+    return communes.filter((commune) => commune.regionId === regionId);
   });
 
   regionsResource = rxResource({
@@ -119,8 +136,10 @@ export class CustomerDetails implements OnInit {
 
   onSelectedChange(event: Event) {
     const { name, value } = event.target as HTMLSelectElement;
-    // console.log('onSelectedChange', name, value);
     this.form.patchValue({ [name]: value });
+    if (name === 'regionId') {
+      this.selectedRegionId.set(Number(value));
+    }
   }
 
   onContactsChange(event: Contact[]) {
