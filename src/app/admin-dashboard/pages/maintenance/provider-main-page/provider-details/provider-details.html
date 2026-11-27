@@ -248,7 +248,7 @@
                 (change)="onSelectedChange($event)"
               >
                 <option>Seleccionar comuna</option>
-                @for (item of communesResource.value()?.data; track item.id) {
+                @for (item of this.filteredCommunes(); track item.id) {
                 @if(this.objInput()?.location?.commune?.id === item.id ){
                 <option selected [value]="item.id">{{item.description}}</option>
                 }@else {

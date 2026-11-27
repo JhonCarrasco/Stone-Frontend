@@ -1,4 +1,11 @@
-import { Component, inject, input, OnInit, signal } from '@angular/core';
+import {
+  Component,
+  computed,
+  inject,
+  input,
+  OnInit,
+  signal,
+} from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -54,6 +61,7 @@ export class DispatchDetails implements OnInit {
   ); // filtrar solo los tipos de documento de dispatch (type === 2)
   zoneList = signal(zoneList);
   zoneDescriptionSelected = signal('');
+  selectedRegionId = signal<number | null>(null);
 
   fileList: File[] | undefined = undefined;
 
@@ -172,10 +180,11 @@ export class DispatchDetails implements OnInit {
   }
 
   onSelectedCommuneChange(event: Event) {
-    const value = (event.target as HTMLSelectElement).value;
-    this.form.patchValue({
-      commune: Number(value),
-    });
+    const { name, value } = event.target as HTMLSelectElement;
+    this.form.patchValue({ [name]: value });
+    if (name === 'regionId') {
+      this.selectedRegionId.set(Number(value));
+    }
   }
 
   onItemizedMaterialChange(event: Material[]) {
@@ -241,6 +250,15 @@ export class DispatchDetails implements OnInit {
         searchText: 'Communes',
       });
     },
+  });
+
+  // Derive the filtered list reactively
+  filteredCommunes = computed(() => {
+    const communes = this.communesResource.value()?.data ?? [];
+    const regionId = this.selectedRegionId();
+
+    if (!regionId) return communes;
+    return communes.filter((commune) => commune.regionId === regionId);
   });
 
   setFormValue(formLike: Partial<MaterialGuideGeneric>) {

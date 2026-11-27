@@ -195,11 +195,12 @@
             >
             <div class="mt-2">
               <select
+                name="communeId"
                 class="select select-bordered w-full"
                 (change)="onSelectedCommuneChange($event)"
               >
                 <option>Seleccionar comuna</option>
-                @for (item of communesResource.value()?.data; track item.id) {
+                @for (item of this.filteredCommunes(); track item.id) {
                 @if(this.objInput().commune === item.id ){
                 <option selected [value]="item.id">{{item.description}}</option>
                 }@else {
